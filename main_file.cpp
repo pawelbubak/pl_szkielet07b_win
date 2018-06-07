@@ -27,6 +27,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define KROL 6
 #define PUSTE 0
 //nowy nowy nowy nowy
+//drugi
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
