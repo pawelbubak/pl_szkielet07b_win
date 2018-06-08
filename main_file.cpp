@@ -55,6 +55,7 @@ void prepareGoniec();
 void prepareKrol();
 void prepareSkoczek();
 void prepareHetman();
+void prepareFloor();
 void wczytajGre();
 
 
@@ -70,6 +71,7 @@ Obj3d wieza;
 Obj3d hetman;
 Obj3d krol;
 Obj3d szachownica;
+Obj3d podloga;
 
 GLuint diffTexWood;
 GLuint normalTexWood;
@@ -77,6 +79,9 @@ GLuint heightTexWood;
 GLuint diffTexBricks;
 GLuint normalTexBricks;
 GLuint heightTexBricks;
+GLuint diffTexFloor;
+GLuint normalTexFloor;
+GLuint heightTexFloor;
 
 //Uchwyty na VAO i bufory wierzchołków
 GLuint bufVertices; //Uchwyt na bufor VBO przechowujący tablicę współrzędnych wierzchołków
@@ -90,6 +95,7 @@ GLuint bufC3; //Uchwyt na bufor VBO przechowujący trzecią kolumnę moacierzy T
 ShaderProgram *shaderProgramPionek; //Wskaźnik na obiekt reprezentujący program cieniujący.
 ShaderProgram *shaderProgramSzachownica;
 ShaderProgram *shaderProgramWieza;
+ShaderProgram *shaderProgramPodloga;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -219,7 +225,7 @@ void initOpenGLProgram(GLFWwindow* window)
     shaderProgramPionek=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl"); //Wczytaj program cieniujący
     shaderProgramSzachownica=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
     shaderProgramWieza=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
-
+    shaderProgramPodloga=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
 
 
     prepareObject(shaderProgramPionek,&pionek);
@@ -229,6 +235,7 @@ void initOpenGLProgram(GLFWwindow* window)
     prepareObject(shaderProgramWieza,&krol);
     prepareObject(shaderProgramWieza,&skoczek);
     prepareObject(shaderProgramWieza,&goniec);
+    prepareObject(shaderProgramPodloga,&podloga);
 
 
     prepareBoard();
@@ -238,6 +245,7 @@ void initOpenGLProgram(GLFWwindow* window)
     prepareHetman();
     prepareKrol();
     prepareSkoczek();
+    prepareFloor();
 
     wczytajGre();
 }
@@ -266,6 +274,11 @@ void freeOpenGLProgram()
     glDeleteTextures(1,&diffTexBricks);
     glDeleteTextures(1,&normalTexBricks);
     glDeleteTextures(1,&heightTexBricks);
+
+    //Wykasuj tekstury
+    glDeleteTextures(1,&diffTexFloor);
+    glDeleteTextures(1,&normalTexFloor);
+    glDeleteTextures(1,&heightTexFloor);
 
 }
 
@@ -384,6 +397,10 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     //Wylicz macierz modelu rysowanego obiektu
     szachownica.M= glm::mat4(1.0f);
     drawObject(shaderProgramSzachownica,P,V,szachownica.M, &szachownica);
+    podloga.M = glm::mat4(1.0f);
+    podloga.M = translate(podloga.M,vec3(0,-3,0));
+    podloga.M = scale(podloga.M,vec3(5,0,5));
+    drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
 
     //Przerzuć tylny bufor na przedni
     glfwSwapBuffers(window);
@@ -428,6 +445,7 @@ int main(void) {
     krol.loadFromOBJ("krol.obj");
     goniec.loadFromOBJ("goniec.obj");
     skoczek.loadFromOBJ("skoczek.obj");
+    podloga.loadFromOBJ("podloga.obj");
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
@@ -516,4 +534,14 @@ void prepareHetman(){
     hetman.diffTexture=diffTexWood;
     hetman.normTexture=normalTexWood;
     hetman.heighTexture=heightTexWood;
+}
+
+void prepareFloor(){
+    diffTexFloor=readTexture("metal_diffuse.png");
+    normalTexFloor=readTexture("metal_normal.png");
+    heightTexFloor=readTexture("metal_height.png");
+
+    podloga.diffTexture=diffTexFloor;
+    podloga.normTexture=normalTexFloor;
+    podloga.heighTexture=heightTexFloor;
 }
