@@ -16,9 +16,9 @@
 #include <fstream>
 #include <string>
 #include <tuple>
+
 using namespace glm;
 using namespace std;
-
 
 class Obj3d
 {

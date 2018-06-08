@@ -26,8 +26,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #define HETMAN 5
 #define KROL 6
 #define PUSTE 0
-//nowy nowy nowy nowy
-//drugi
+
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
 #include <glm/glm.hpp>
@@ -49,6 +48,8 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 using namespace glm;
 using namespace std;
 
+void prepareBoard();
+void preparePawn();
 void wczytajGre();
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
@@ -63,16 +64,14 @@ Obj3d wieza;
 Obj3d hetman;
 Obj3d krol;
 Obj3d szachownica;
-GLuint  diffTexWood;
+GLuint diffTexWood;
 GLuint normalTexWood;
-GLuint  heightTexWood;
-
-GLuint  diffTexBricks;
+GLuint heightTexWood;
+GLuint diffTexBricks;
 GLuint normalTexBricks;
-GLuint  heightTexBricks;
+GLuint heightTexBricks;
 
 //Uchwyty na VAO i bufory wierzchołków
-
 GLuint bufVertices; //Uchwyt na bufor VBO przechowujący tablicę współrzędnych wierzchołków
 GLuint bufNormals; //Uchwyt na bufor VBO przechowujący tablicę wektorów normalnych
 GLuint bufTexCoords; //Uchwyt na bufor VBO przechowujący tablicę współrzędnych teksturowania
@@ -85,17 +84,13 @@ ShaderProgram *shaderProgramPionek; //Wskaźnik na obiekt reprezentujący progra
 ShaderProgram *shaderProgramSzachownica;
 
 //Procedura obsługi błędów
-void error_callback(int error, const char* description)
-{
+void error_callback(int error, const char* description) {
     fputs(description, stderr);
 }
 
 //Procedura obsługi klawiatury
-void key_callback(GLFWwindow* window, int key,
-                  int scancode, int action, int mods)
-{
-    if (action == GLFW_PRESS)
-    {
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
+    if (action == GLFW_PRESS) {
         if (key == GLFW_KEY_LEFT)
             speed_y = -3.14;
         if (key == GLFW_KEY_RIGHT)
@@ -105,9 +100,7 @@ void key_callback(GLFWwindow* window, int key,
         if (key == GLFW_KEY_DOWN)
             speed_x = 3.14;
     }
-
-    if (action == GLFW_RELEASE)
-    {
+    if (action == GLFW_RELEASE) {
         if (key == GLFW_KEY_LEFT)
             speed_y = 0;
         if (key == GLFW_KEY_RIGHT)
@@ -120,22 +113,17 @@ void key_callback(GLFWwindow* window, int key,
 }
 
 //Procedura obługi zmiany rozmiaru bufora ramki
-void windowResize(GLFWwindow* window, int width, int height)
-{
+void windowResize(GLFWwindow* window, int width, int height) {
     glViewport(0, 0, width, height); //Obraz ma być generowany w oknie o tej rozdzielczości
-    if (height!=0)
-    {
+    if (height!=0) {
         aspect=(float)width/(float)height; //Stosunek szerokości do wysokości okna
-    }
-    else
-    {
+    } else {
         aspect=1;
     }
 }
 
 
-GLuint readTexture(char* filename)
-{
+GLuint readTexture(char* filename) {
     GLuint tex;
     glActiveTexture(GL_TEXTURE0);
 
@@ -149,8 +137,7 @@ GLuint readTexture(char* filename)
     glGenTextures(1,&tex); //Zainicjuj jeden uchwyt
     glBindTexture(GL_TEXTURE_2D, tex); //Uaktywnij uchwyt
     //Wczytaj obrazek do pamięci KG skojarzonej z uchwytem
-    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0,
-                 GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
+    glTexImage2D(GL_TEXTURE_2D, 0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE, (unsigned char*) image.data());
 
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER,GL_LINEAR);
@@ -160,8 +147,7 @@ GLuint readTexture(char* filename)
 
 
 //Tworzy bufor VBO z tablicy
-GLuint makeBuffer(void *data, int vertexCount, int vertexSize)
-{
+GLuint makeBuffer(void *data, int vertexCount, int vertexSize) {
     GLuint handle;
 
     glGenBuffers(1,&handle);//Wygeneruj uchwyt na Vertex Buffer Object (VBO), który będzie zawierał tablicę danych
@@ -172,8 +158,7 @@ GLuint makeBuffer(void *data, int vertexCount, int vertexSize)
 }
 
 //Przypisuje bufor VBO do atrybutu
-void assignVBOtoAttribute(ShaderProgram *shaderProgram,const char* attributeName, GLuint bufVBO, int vertexSize)
-{
+void assignVBOtoAttribute(ShaderProgram *shaderProgram,const char* attributeName, GLuint bufVBO, int vertexSize) {
     GLuint location=shaderProgram->getAttribLocation(attributeName); //Pobierz numer slotu dla atrybutu
     glBindBuffer(GL_ARRAY_BUFFER,bufVBO);  //Uaktywnij uchwyt VBO
     glEnableVertexAttribArray(location); //Włącz używanie atrybutu o numerze slotu zapisanym w zmiennej location
@@ -212,26 +197,6 @@ void prepareObject(ShaderProgram *shaderProgram, Obj3d * model)
     assignVBOtoAttribute(shaderProgram,"c3",bufC3,4); //"c3" odnosi się do deklaracji "in vec4 c3;" w vertex shaderze
 
     glBindVertexArray(0); //Dezaktywuj VAO
-}
-
-void preparePawn(){
-    diffTexWood=readTexture("download.png");
-    normalTexWood=readTexture("wood_norm.png");
-    heightTexWood=readTexture("wood_height.png");
-
-    pionek.diffTexture=diffTexWood;
-    pionek.normTexture=normalTexWood;
-    pionek.heighTexture=heightTexWood;
-}
-
-void prepareBoard(){
-    diffTexBricks=readTexture("szachownica_diffuse.png");
-    normalTexBricks=readTexture("wood_norm.png");
-    heightTexBricks=readTexture("wood_height.png");
-
-    szachownica.diffTexture=diffTexBricks;
-    szachownica.normTexture=normalTexBricks;
-    szachownica.heighTexture=heightTexBricks;
 }
 
 //Procedura inicjująca
@@ -307,7 +272,6 @@ void drawObject(ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM, Obj3d *
     glUniform1i(shaderProgram->getUniformLocation("normalMap"),1);
     glUniform1i(shaderProgram->getUniformLocation("heightMap"),2);
 
-
     //Przypisz tekstury do jednostek teksturujących
     glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_2D,model->diffTexture);
@@ -321,7 +285,6 @@ void drawObject(ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM, Obj3d *
 
     //Narysowanie obiektu
     glDrawArrays(GL_TRIANGLES,0,model->vertices.size());
-
 
     //Dezaktywuj VAO
     glBindVertexArray(0);
@@ -343,8 +306,6 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     V= rotate(V,-PI/4,vec3(1,0,0));
     V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
     V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
-
-
 
     for (int i=0; i<8; i++)
     {
@@ -392,20 +353,14 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                 drawObject(shaderProgramPionek,P,V,krol.M,&krol);
                 break;
             }
-
-
         }
     }
-
     //Wylicz macierz modelu rysowanego obiektu
-
     szachownica.M= glm::mat4(1.0f);
     drawObject(shaderProgramSzachownica,P,V,szachownica.M, &szachownica);
 
     //Przerzuć tylny bufor na przedni
     glfwSwapBuffers(window);
-
-
 }
 
 void wczytajGre()
@@ -439,27 +394,21 @@ void wczytajGre()
     gra[4][7]=-KROL;
 }
 
-
-
-int main(void)
-{
+int main(void) {
     pionek.loadFromOBJ("hetman.obj");
     szachownica.loadFromOBJ("szachownica.obj");
 
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
-
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
-    if (!glfwInit())   //Zainicjuj bibliotekę GLFW
-    {
+    if (!glfwInit()) {  //Zainicjuj bibliotekę GLFW
         fprintf(stderr, "Nie można zainicjować GLFW.\n");
         exit(EXIT_FAILURE);
     }
 
     window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
-    if (!window) //Jeżeli okna nie udało się utworzyć, to zamknij program
-    {
+    if (!window) { //Jeżeli okna nie udało się utworzyć, to zamknij program
         fprintf(stderr, "Nie można utworzyć okna.\n");
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -468,8 +417,7 @@ int main(void)
     glfwMakeContextCurrent(window); //Od tego momentu kontekst okna staje się aktywny i polecenia OpenGL będą dotyczyć właśnie jego.
     glfwSwapInterval(1); //Czekaj na 1 powrót plamki przed pokazaniem ukrytego bufora
 
-    if (glewInit() != GLEW_OK)   //Zainicjuj bibliotekę GLEW
-    {
+    if (glewInit() != GLEW_OK) {  //Zainicjuj bibliotekę GLEW
         fprintf(stderr, "Nie można zainicjować GLEW.\n");
         exit(EXIT_FAILURE);
     }
@@ -482,8 +430,7 @@ int main(void)
     glfwSetTime(0); //Wyzeruj licznik czasu
 
     //Główna pętla
-    while (!glfwWindowShouldClose(window)) //Tak długo jak okno nie powinno zostać zamknięte
-    {
+    while (!glfwWindowShouldClose(window)) { //Tak długo jak okno nie powinno zostać zamknięte
         angle_x += speed_x*glfwGetTime(); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
         angle_y += speed_y*glfwGetTime(); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
         glfwSetTime(0); //Wyzeruj licznik czasu
@@ -492,8 +439,27 @@ int main(void)
     }
 
     freeOpenGLProgram();
-
     glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
     glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
     exit(EXIT_SUCCESS);
+}
+
+void preparePawn(){
+    diffTexWood=readTexture("download.png");
+    normalTexWood=readTexture("wood_norm.png");
+    heightTexWood=readTexture("wood_height.png");
+
+    pionek.diffTexture=diffTexWood;
+    pionek.normTexture=normalTexWood;
+    pionek.heighTexture=heightTexWood;
+}
+
+void prepareBoard(){
+    diffTexBricks=readTexture("szachownica_diffuse.png");
+    normalTexBricks=readTexture("wood_norm.png");
+    heightTexBricks=readTexture("wood_height.png");
+
+    szachownica.diffTexture=diffTexBricks;
+    szachownica.normTexture=normalTexBricks;
+    szachownica.heighTexture=heightTexBricks;
 }
