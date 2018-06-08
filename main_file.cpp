@@ -50,11 +50,20 @@ using namespace std;
 
 void prepareBoard();
 void preparePawn();
+<<<<<<< HEAD
+=======
+void prepareWieza();
+void prepareGoniec();
+void prepareKrol();
+void prepareSkoczek();
+void prepareHetman();
+>>>>>>> 3.1
 void prepareFloor();
 void wczytajGre();
+
+
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
-
 float aspect=1; //Stosunek szerokości do wysokości okna
 
 int gra[8][8];
@@ -66,6 +75,10 @@ Obj3d hetman;
 Obj3d krol;
 Obj3d szachownica;
 Obj3d podloga;
+<<<<<<< HEAD
+=======
+
+>>>>>>> 3.1
 GLuint diffTexWood;
 GLuint normalTexWood;
 GLuint heightTexWood;
@@ -87,6 +100,10 @@ GLuint bufC3; //Uchwyt na bufor VBO przechowujący trzecią kolumnę moacierzy T
 //Uchwyty na shadery
 ShaderProgram *shaderProgramPionek; //Wskaźnik na obiekt reprezentujący program cieniujący.
 ShaderProgram *shaderProgramSzachownica;
+<<<<<<< HEAD
+=======
+ShaderProgram *shaderProgramWieza;
+>>>>>>> 3.1
 ShaderProgram *shaderProgramPodloga;
 
 //Procedura obsługi błędów
@@ -216,6 +233,7 @@ void initOpenGLProgram(GLFWwindow* window)
 
     shaderProgramPionek=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl"); //Wczytaj program cieniujący
     shaderProgramSzachownica=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
+<<<<<<< HEAD
     shaderProgramPodloga=new ShaderProgram("vshaderPodloga.glsl",NULL,"fshaderPionek.glsl");
 
     prepareObject(shaderProgramPionek,&pionek);
@@ -224,6 +242,29 @@ void initOpenGLProgram(GLFWwindow* window)
 
     prepareBoard();
     preparePawn();
+=======
+    shaderProgramWieza=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
+    shaderProgramPodloga=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
+
+
+    prepareObject(shaderProgramPionek,&pionek);
+    prepareObject(shaderProgramSzachownica,&szachownica);
+    prepareObject(shaderProgramWieza,&wieza);
+    prepareObject(shaderProgramWieza,&hetman);
+    prepareObject(shaderProgramWieza,&krol);
+    prepareObject(shaderProgramWieza,&skoczek);
+    prepareObject(shaderProgramWieza,&goniec);
+    prepareObject(shaderProgramPodloga,&podloga);
+
+
+    prepareBoard();
+    preparePawn();
+    prepareWieza();
+    prepareGoniec();
+    prepareHetman();
+    prepareKrol();
+    prepareSkoczek();
+>>>>>>> 3.1
     prepareFloor();
 
     wczytajGre();
@@ -254,6 +295,11 @@ void freeOpenGLProgram()
     glDeleteTextures(1,&diffTexBricks);
     glDeleteTextures(1,&normalTexBricks);
     glDeleteTextures(1,&heightTexBricks);
+    //Wykasuj tekstury
+    glDeleteTextures(1,&diffTexFloor);
+    glDeleteTextures(1,&normalTexFloor);
+    glDeleteTextures(1,&heightTexFloor);
+
     //Wykasuj tekstury
     glDeleteTextures(1,&diffTexFloor);
     glDeleteTextures(1,&normalTexFloor);
@@ -332,25 +378,29 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                 break;
             case PIONEK:
                 pionek.M = glm::mat4(1.0f);
-                pionek.M=translate(pionek.M,vec3(0.8,2.9,0.8));
+                pionek.M=translate(pionek.M,vec3(0.8,0.9,0.8));
                 pionek.M=pionek.M=translate(pionek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
                 drawObject(shaderProgramPionek,P,V,pionek.M,&pionek);
                 break;
             case SKOCZEK:
+
                 skoczek.M = glm::mat4(1.0f);
-                skoczek.M=translate(skoczek.M,vec3(0.8,2.9,0.8));
-                skoczek.M=skoczek.M=translate(skoczek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                skoczek.M=translate(skoczek.M,vec3(0.8,1.3,0.8));
+                skoczek.M=translate(skoczek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                   if(gra[i][j]>0){
+                skoczek.M=rotate(skoczek.M,PI,vec3(0,1,0));
+                }
                 drawObject(shaderProgramPionek,P,V,skoczek.M,&skoczek);
                 break;
             case GONIEC:
                 goniec.M = glm::mat4(1.0f);
-                goniec.M=translate(goniec.M,vec3(0.8,2.9,0.8));
+                goniec.M=translate(goniec.M,vec3(0.8,1.9,0.8));
                 goniec.M=goniec.M=translate(goniec.M,vec3((j-4)*1.6,0,(i-4)*1.6));
                 drawObject(shaderProgramPionek,P,V,goniec.M,&goniec);
                 break;
             case WIEZA:
                 wieza.M = glm::mat4(1.0f);
-                wieza.M=translate(wieza.M,vec3(0.8,2.9,0.8));
+                wieza.M=translate(wieza.M,vec3(0.8,1.2,0.8));
                 wieza.M=wieza.M=translate(wieza.M,vec3((j-4)*1.6,0,(i-4)*1.6));
                 drawObject(shaderProgramPionek,P,V,wieza.M,&wieza);
                 break;
@@ -362,7 +412,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                 break;
             case KROL:
                 krol.M = glm::mat4(1.0f);
-                krol.M=translate(krol.M,vec3(0.8,2.9,0.8));
+                krol.M=translate(krol.M,vec3(0.8,3.5,0.8));
                 krol.M=krol.M=translate(krol.M,vec3((j-4)*1.6,0,(i-4)*1.6));
                 drawObject(shaderProgramPionek,P,V,krol.M,&krol);
                 break;
@@ -375,6 +425,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     podloga.M = translate(podloga.M,vec3(0,-10,0));
     //podloga.M = scale(podloga.M,vec3(5,0,5));
     drawObject(shaderProgramSzachownica,P,V,szachownica.M, &szachownica);
+<<<<<<< HEAD
     drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
     podloga.M = translate(podloga.M,vec3(14,0,15.25));
     drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
@@ -385,6 +436,11 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     podloga.M = translate(podloga.M,vec3(0,0,-15.25));
     drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
     podloga.M = translate(podloga.M,vec3(-28,0,-30.5));
+=======
+    podloga.M = glm::mat4(1.0f);
+    podloga.M = translate(podloga.M,vec3(0,-3,0));
+    podloga.M = scale(podloga.M,vec3(5,0,5));
+>>>>>>> 3.1
     drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
 
     //Przerzuć tylny bufor na przedni
@@ -423,10 +479,19 @@ void wczytajGre()
 }
 
 int main(void) {
-    pionek.loadFromOBJ("hetman.obj");
+    pionek.loadFromOBJ("pionek.obj");
     szachownica.loadFromOBJ("szachownica.obj");
+<<<<<<< HEAD
     podloga.loadFromOBJ("podloga.obj");
 
+=======
+    wieza.loadFromOBJ("wieza.obj");
+    hetman.loadFromOBJ("hetman.obj");
+    krol.loadFromOBJ("krol.obj");
+    goniec.loadFromOBJ("goniec.obj");
+    skoczek.loadFromOBJ("skoczek.obj");
+    podloga.loadFromOBJ("podloga.obj");
+>>>>>>> 3.1
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
@@ -466,7 +531,6 @@ int main(void) {
         drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
-
     freeOpenGLProgram();
     glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
     glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
@@ -501,4 +565,39 @@ void prepareBoard(){
     szachownica.diffTexture=diffTexBricks;
     szachownica.normTexture=normalTexBricks;
     szachownica.heighTexture=heightTexBricks;
+}
+void prepareWieza(){
+    wieza.diffTexture=diffTexWood;
+    wieza.normTexture=normalTexWood;
+    wieza.heighTexture=heightTexWood;
+}
+void prepareSkoczek(){
+    skoczek.diffTexture=diffTexWood;
+    skoczek.normTexture=normalTexWood;
+    skoczek.heighTexture=heightTexWood;
+}
+void prepareGoniec(){
+    goniec.diffTexture=diffTexWood;
+    goniec.normTexture=normalTexWood;
+    goniec.heighTexture=heightTexWood;
+}
+void prepareKrol(){
+    krol.diffTexture=diffTexWood;
+    krol.normTexture=normalTexWood;
+    krol.heighTexture=heightTexWood;
+}
+void prepareHetman(){
+    hetman.diffTexture=diffTexWood;
+    hetman.normTexture=normalTexWood;
+    hetman.heighTexture=heightTexWood;
+}
+
+void prepareFloor(){
+    diffTexFloor=readTexture("metal_diffuse.png");
+    normalTexFloor=readTexture("metal_normal.png");
+    heightTexFloor=readTexture("metal_height.png");
+
+    podloga.diffTexture=diffTexFloor;
+    podloga.normTexture=normalTexFloor;
+    podloga.heighTexture=heightTexFloor;
 }
