@@ -42,12 +42,12 @@ void main(void) {
     vec4 kd=texture(diffuseMap,tc); //Kolor obiektu w swietle rozproszonym
     vec4 ks=vec4(1,1,1,0); //Kolor obiektu w swietle odbitym
 
-    vec4 la=vec4(0.2,0.2,0.2,0); //Kolor swiatla otoczenia
+    vec4 la=vec4(0.3,0.3,0.3,0); //Kolor swiatla otoczenia
     vec4 ld=vec4(1,1,1,1); //Kolor swiatla rozpraszanego
     vec4 ls=vec4(1,1,1,0); //Kolor swiatla odbijanego
 
     float nl=max(dot(n,l),0); //Kosinus kata pomiedzy wektorami do swiatla i normalnym
     float rv=pow(max(dot(r,v),0),10); //Kosinus kata pomiedzy wektorami do obserwatora i odbitym, podniesiony do wykladnika Phonga
 
-	pixelColor=ka*la+kd*ld*vec4(nl,nl,nl,0)+ks*ls*vec4(rv,rv,rv,0);
+	pixelColor=ka*la*kd+kd*ld*vec4(nl,nl,nl,0)+ks*ls*vec4(rv,rv,rv,0);
 }

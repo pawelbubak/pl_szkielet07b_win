@@ -50,10 +50,16 @@ using namespace std;
 
 void prepareBoard();
 void preparePawn();
+void prepareWieza();
+void prepareGoniec();
+void prepareKrol();
+void prepareSkoczek();
+void prepareHetman();
 void wczytajGre();
+
+
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
-
 float aspect=1; //Stosunek szerokości do wysokości okna
 
 int gra[8][8];
@@ -212,12 +218,26 @@ void initOpenGLProgram(GLFWwindow* window)
 
     shaderProgramPionek=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl"); //Wczytaj program cieniujący
     shaderProgramSzachownica=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
+    shaderProgramWieza=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
+
+
 
     prepareObject(shaderProgramPionek,&pionek);
     prepareObject(shaderProgramSzachownica,&szachownica);
+    prepareObject(shaderProgramWieza,&wieza);
+    prepareObject(shaderProgramWieza,&hetman);
+    prepareObject(shaderProgramWieza,&krol);
+    prepareObject(shaderProgramWieza,&skoczek);
+    prepareObject(shaderProgramWieza,&goniec);
+
 
     prepareBoard();
     preparePawn();
+    prepareWieza();
+    prepareGoniec();
+    prepareHetman();
+    prepareKrol();
+    prepareSkoczek();
 
     wczytajGre();
 }
@@ -320,25 +340,29 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                 break;
             case PIONEK:
                 pionek.M = glm::mat4(1.0f);
-                pionek.M=translate(pionek.M,vec3(0.8,2.9,0.8));
+                pionek.M=translate(pionek.M,vec3(0.8,0.9,0.8));
                 pionek.M=pionek.M=translate(pionek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
                 drawObject(shaderProgramPionek,P,V,pionek.M,&pionek);
                 break;
             case SKOCZEK:
+
                 skoczek.M = glm::mat4(1.0f);
-                skoczek.M=translate(skoczek.M,vec3(0.8,2.9,0.8));
-                skoczek.M=skoczek.M=translate(skoczek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                skoczek.M=translate(skoczek.M,vec3(0.8,1.3,0.8));
+                skoczek.M=translate(skoczek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                   if(gra[i][j]>0){
+                skoczek.M=rotate(skoczek.M,PI,vec3(0,1,0));
+                }
                 drawObject(shaderProgramPionek,P,V,skoczek.M,&skoczek);
                 break;
             case GONIEC:
                 goniec.M = glm::mat4(1.0f);
-                goniec.M=translate(goniec.M,vec3(0.8,2.9,0.8));
+                goniec.M=translate(goniec.M,vec3(0.8,1.9,0.8));
                 goniec.M=goniec.M=translate(goniec.M,vec3((j-4)*1.6,0,(i-4)*1.6));
                 drawObject(shaderProgramPionek,P,V,goniec.M,&goniec);
                 break;
             case WIEZA:
                 wieza.M = glm::mat4(1.0f);
-                wieza.M=translate(wieza.M,vec3(0.8,2.9,0.8));
+                wieza.M=translate(wieza.M,vec3(0.8,1.2,0.8));
                 wieza.M=wieza.M=translate(wieza.M,vec3((j-4)*1.6,0,(i-4)*1.6));
                 drawObject(shaderProgramPionek,P,V,wieza.M,&wieza);
                 break;
@@ -350,7 +374,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                 break;
             case KROL:
                 krol.M = glm::mat4(1.0f);
-                krol.M=translate(krol.M,vec3(0.8,2.9,0.8));
+                krol.M=translate(krol.M,vec3(0.8,3.5,0.8));
                 krol.M=krol.M=translate(krol.M,vec3((j-4)*1.6,0,(i-4)*1.6));
                 drawObject(shaderProgramPionek,P,V,krol.M,&krol);
                 break;
@@ -397,9 +421,13 @@ void wczytajGre()
 }
 
 int main(void) {
-    pionek.loadFromOBJ("hetman.obj");
+    pionek.loadFromOBJ("pionek.obj");
     szachownica.loadFromOBJ("szachownica.obj");
-
+    wieza.loadFromOBJ("wieza.obj");
+    hetman.loadFromOBJ("hetman.obj");
+    krol.loadFromOBJ("krol.obj");
+    goniec.loadFromOBJ("goniec.obj");
+    skoczek.loadFromOBJ("skoczek.obj");
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
@@ -439,7 +467,6 @@ int main(void) {
         drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
-
     freeOpenGLProgram();
     glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
     glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
@@ -465,5 +492,28 @@ void prepareBoard(){
     szachownica.normTexture=normalTexBricks;
     szachownica.heighTexture=heightTexBricks;
 }
-
-
+void prepareWieza(){
+    wieza.diffTexture=diffTexWood;
+    wieza.normTexture=normalTexWood;
+    wieza.heighTexture=heightTexWood;
+}
+void prepareSkoczek(){
+    skoczek.diffTexture=diffTexWood;
+    skoczek.normTexture=normalTexWood;
+    skoczek.heighTexture=heightTexWood;
+}
+void prepareGoniec(){
+    goniec.diffTexture=diffTexWood;
+    goniec.normTexture=normalTexWood;
+    goniec.heighTexture=heightTexWood;
+}
+void prepareKrol(){
+    krol.diffTexture=diffTexWood;
+    krol.normTexture=normalTexWood;
+    krol.heighTexture=heightTexWood;
+}
+void prepareHetman(){
+    hetman.diffTexture=diffTexWood;
+    hetman.normTexture=normalTexWood;
+    hetman.heighTexture=heightTexWood;
+}
