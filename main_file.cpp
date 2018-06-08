@@ -372,7 +372,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     //Wylicz macierz modelu rysowanego obiektu
     szachownica.M= glm::mat4(1.0f);
     podloga.M = glm::mat4(1.0f);
-    podloga.M = translate(podloga.M,vec3(0,-3,0));
+    podloga.M = translate(podloga.M,vec3(0,-10,0));
     //podloga.M = scale(podloga.M,vec3(5,0,5));
     drawObject(shaderProgramSzachownica,P,V,szachownica.M, &szachownica);
     drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
@@ -474,9 +474,9 @@ int main(void) {
 }
 
 void prepareFloor(){
-    diffTexFloor=readTexture("download.png");
-    normalTexFloor=readTexture("wood_norm.png");
-    heightTexFloor=readTexture("wood_height.png");
+    diffTexFloor=readTexture("metal_diffuse.png");
+    normalTexFloor=readTexture("metal_normal.png");
+    heightTexFloor=readTexture("metal_height.png");
 
     podloga.diffTexture=diffTexFloor;
     podloga.normTexture=normalTexFloor;
