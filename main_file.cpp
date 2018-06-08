@@ -64,6 +64,7 @@ Obj3d wieza;
 Obj3d hetman;
 Obj3d krol;
 Obj3d szachownica;
+
 GLuint diffTexWood;
 GLuint normalTexWood;
 GLuint heightTexWood;
@@ -82,6 +83,7 @@ GLuint bufC3; //Uchwyt na bufor VBO przechowujący trzecią kolumnę moacierzy T
 //Uchwyty na shadery
 ShaderProgram *shaderProgramPionek; //Wskaźnik na obiekt reprezentujący program cieniujący.
 ShaderProgram *shaderProgramSzachownica;
+ShaderProgram *shaderProgramWieza;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -463,3 +465,5 @@ void prepareBoard(){
     szachownica.normTexture=normalTexBricks;
     szachownica.heighTexture=heightTexBricks;
 }
+
+

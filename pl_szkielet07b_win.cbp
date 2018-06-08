@@ -31,6 +31,7 @@
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
+			<Add option="-std=gnu++11" />
 			<Add option="-DGLEW_STATIC" />
 			<Add directory="glm" />
 			<Add directory="glfw/include" />
