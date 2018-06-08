@@ -50,6 +50,7 @@ using namespace std;
 
 void prepareBoard();
 void preparePawn();
+void prepareFloor();
 void wczytajGre();
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
@@ -64,12 +65,16 @@ Obj3d wieza;
 Obj3d hetman;
 Obj3d krol;
 Obj3d szachownica;
+Obj3d podloga;
 GLuint diffTexWood;
 GLuint normalTexWood;
 GLuint heightTexWood;
 GLuint diffTexBricks;
 GLuint normalTexBricks;
 GLuint heightTexBricks;
+GLuint diffTexFloor;
+GLuint normalTexFloor;
+GLuint heightTexFloor;
 
 //Uchwyty na VAO i bufory wierzchołków
 GLuint bufVertices; //Uchwyt na bufor VBO przechowujący tablicę współrzędnych wierzchołków
@@ -82,6 +87,7 @@ GLuint bufC3; //Uchwyt na bufor VBO przechowujący trzecią kolumnę moacierzy T
 //Uchwyty na shadery
 ShaderProgram *shaderProgramPionek; //Wskaźnik na obiekt reprezentujący program cieniujący.
 ShaderProgram *shaderProgramSzachownica;
+ShaderProgram *shaderProgramPodloga;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -210,12 +216,15 @@ void initOpenGLProgram(GLFWwindow* window)
 
     shaderProgramPionek=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl"); //Wczytaj program cieniujący
     shaderProgramSzachownica=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
+    shaderProgramPodloga=new ShaderProgram("vshaderPodloga.glsl",NULL,"fshaderPionek.glsl");
 
     prepareObject(shaderProgramPionek,&pionek);
     prepareObject(shaderProgramSzachownica,&szachownica);
+    prepareObject(shaderProgramPodloga,&podloga);
 
     prepareBoard();
     preparePawn();
+    prepareFloor();
 
     wczytajGre();
 }
@@ -227,6 +236,7 @@ void freeOpenGLProgram()
 
     glDeleteVertexArrays(1,&szachownica.vao);
     glDeleteVertexArrays(1,&pionek.vao); //Wykasuj VAO
+    glDeleteVertexArrays(1,&podloga.vao); //Wykasuj VAO
 
     //Wykasuj bufory  VBO
     glDeleteBuffers(1,&bufVertices);
@@ -244,6 +254,10 @@ void freeOpenGLProgram()
     glDeleteTextures(1,&diffTexBricks);
     glDeleteTextures(1,&normalTexBricks);
     glDeleteTextures(1,&heightTexBricks);
+    //Wykasuj tekstury
+    glDeleteTextures(1,&diffTexFloor);
+    glDeleteTextures(1,&normalTexFloor);
+    glDeleteTextures(1,&heightTexFloor);
 
 }
 
@@ -357,7 +371,21 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     }
     //Wylicz macierz modelu rysowanego obiektu
     szachownica.M= glm::mat4(1.0f);
+    podloga.M = glm::mat4(1.0f);
+    podloga.M = translate(podloga.M,vec3(0,-3,0));
+    //podloga.M = scale(podloga.M,vec3(5,0,5));
     drawObject(shaderProgramSzachownica,P,V,szachownica.M, &szachownica);
+    drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
+    podloga.M = translate(podloga.M,vec3(14,0,15.25));
+    drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
+    podloga.M = translate(podloga.M,vec3(-14,0,0));
+    drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
+    podloga.M = translate(podloga.M,vec3(-14,0,0));
+    drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
+    podloga.M = translate(podloga.M,vec3(0,0,-15.25));
+    drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
+    podloga.M = translate(podloga.M,vec3(-28,0,-30.5));
+    drawObject(shaderProgramPodloga,P,V,podloga.M, &podloga);
 
     //Przerzuć tylny bufor na przedni
     glfwSwapBuffers(window);
@@ -397,6 +425,7 @@ void wczytajGre()
 int main(void) {
     pionek.loadFromOBJ("hetman.obj");
     szachownica.loadFromOBJ("szachownica.obj");
+    podloga.loadFromOBJ("podloga.obj");
 
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
@@ -442,6 +471,16 @@ int main(void) {
     glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
     glfwTerminate(); //Zwolnij zasoby zajęte przez GLFW
     exit(EXIT_SUCCESS);
+}
+
+void prepareFloor(){
+    diffTexFloor=readTexture("download.png");
+    normalTexFloor=readTexture("wood_norm.png");
+    heightTexFloor=readTexture("wood_height.png");
+
+    podloga.diffTexture=diffTexFloor;
+    podloga.normTexture=normalTexFloor;
+    podloga.heighTexture=heightTexFloor;
 }
 
 void preparePawn(){

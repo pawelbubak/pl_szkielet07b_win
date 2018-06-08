@@ -1746,7 +1746,7 @@
 1528108440 c:\users\pawel\documents\github\pl_szkielet07b_win\teapot.h
 	"model.h"
 
-1528453238 source:c:\users\pawel\documents\github\pl_szkielet07b_win\main_file.cpp
+1528463830 source:c:\users\pawel\documents\github\pl_szkielet07b_win\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1846,7 +1846,7 @@
 	"cube.h"
 	"teapot.h"
 
-1528453238 c:\users\pawel\documents\github\pl_szkielet07b_win\obj3d.h
+1528455154 c:\users\pawel\documents\github\pl_szkielet07b_win\obj3d.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>

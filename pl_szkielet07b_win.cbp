@@ -63,6 +63,7 @@
 		<Unit filename="teapot.cpp" />
 		<Unit filename="teapot.h" />
 		<Unit filename="vshaderPionek.glsl" />
+		<Unit filename="vshaderPodloga.glsl" />
 		<Extensions>
 			<code_completion />
 			<envvars />
