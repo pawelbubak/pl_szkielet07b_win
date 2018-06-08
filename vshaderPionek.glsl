@@ -4,6 +4,7 @@
 uniform mat4 P;
 uniform mat4 V;
 uniform mat4 M;
+uniform float Kolor;
 
 
 //Atrybuty
@@ -19,11 +20,13 @@ out vec4 i_l; //wektor do swiatla(przestrzen oka)
 out vec4 i_v; //wektor do obserwatora(przestrzen oka)
 out vec4 i_n; //wektor normalny (przestrzen oka)
 out vec2 iTexCoord0; //wspolrzedne teksturowania
+out float kolor;
 
 
 void main(void) {
 
     vec4 lp=vec4(20,50,-20,1); //Wspolrzedne swiatla w przestrzeni swiata
+    kolor=Kolor;
 
     mat3 tbn = mat3(normalize(c1.rgb),normalize(c2.rgb),normalize(normal.rgb)); //odwrotna tbn
    // mat3 itbn1 = transpose(tbn);

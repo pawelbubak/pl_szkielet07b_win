@@ -10,6 +10,7 @@ in vec4 i_l; //wektor do swiatla(przestrzen oka)
 in vec4 i_v; //wektor do obserwatora(przestrzen oka)
 in vec4 i_n; //wektor normalny (przestrzen oka)
 in vec2 iTexCoord0; //wspolrzedne teksturowania
+in float kolor;
 
 vec2 parallaxTexCoords(vec4 v, vec2 t, float h, float s){
     vec2 ti = -h*v.xy/s; //przyrost
@@ -47,7 +48,7 @@ void main(void) {
     vec4 ls=vec4(1,1,1,0); //Kolor swiatla odbijanego
 
     float nl=max(dot(n,l),0); //Kosinus kata pomiedzy wektorami do swiatla i normalnym
-    float rv=pow(max(dot(r,v),0),10); //Kosinus kata pomiedzy wektorami do obserwatora i odbitym, podniesiony do wykladnika Phonga
+    float rv=pow(max(dot(r,v),0),60); //Kosinus kata pomiedzy wektorami do obserwatora i odbitym, podniesiony do wykladnika Phonga
 
-	pixelColor=ka*la*kd+kd*ld*vec4(nl,nl,nl,0)+ks*ls*vec4(rv,rv,rv,0);
+	pixelColor=ka*la*kd+kd*ld*vec4(nl,nl,nl,0)+ks*ls*vec4(rv,rv,rv,0)-(kd*ld*vec4(nl,nl,nl,0)*vec4(0.95*kolor,0.95*kolor,0.95*kolor,0));
 }

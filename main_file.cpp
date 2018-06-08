@@ -269,7 +269,7 @@ void freeOpenGLProgram()
 
 }
 
-void drawObject(ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM, Obj3d * model)
+void drawObject(ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM,float kolor, Obj3d * model)
 {
     //Włączenie programu cieniującego, który ma zostać użyty do rysowania
     //W tym programie wystarczyłoby wywołać to raz, w setupShaders, ale chodzi o pokazanie,
@@ -288,7 +288,7 @@ void drawObject(ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM, Obj3d *
     glUniformMatrix4fv(shaderProgram->getUniformLocation("P"),1, false, glm::value_ptr(mP));
     glUniformMatrix4fv(shaderProgram->getUniformLocation("V"),1, false, glm::value_ptr(mV));
     glUniformMatrix4fv(shaderProgram->getUniformLocation("M"),1, false, glm::value_ptr(mM));
-
+    glUniform1f(shaderProgram->getUniformLocation("Kolor"), kolor);
     //Powiąż zmienne typu sampler2D z jednostkami teksturującymi
     glUniform1i(shaderProgram->getUniformLocation("diffuseMap"),0);
     glUniform1i(shaderProgram->getUniformLocation("normalMap"),1);
@@ -333,6 +333,13 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     {
         for (int j=0; j<8; j++)
         {
+            int kolor;
+            if (gra[i][j]<0){
+                kolor=1;
+            }else{
+            kolor=0;
+            }
+
 
             switch (abs(gra[i][j]))
             {
@@ -342,7 +349,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                 pionek.M = glm::mat4(1.0f);
                 pionek.M=translate(pionek.M,vec3(0.8,0.9,0.8));
                 pionek.M=pionek.M=translate(pionek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                drawObject(shaderProgramPionek,P,V,pionek.M,&pionek);
+                drawObject(shaderProgramPionek,P,V,pionek.M,kolor,&pionek);
                 break;
             case SKOCZEK:
 
@@ -352,38 +359,38 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                    if(gra[i][j]>0){
                 skoczek.M=rotate(skoczek.M,PI,vec3(0,1,0));
                 }
-                drawObject(shaderProgramPionek,P,V,skoczek.M,&skoczek);
+                drawObject(shaderProgramPionek,P,V,skoczek.M,kolor,&skoczek);
                 break;
             case GONIEC:
                 goniec.M = glm::mat4(1.0f);
                 goniec.M=translate(goniec.M,vec3(0.8,1.9,0.8));
                 goniec.M=goniec.M=translate(goniec.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                drawObject(shaderProgramPionek,P,V,goniec.M,&goniec);
+                drawObject(shaderProgramPionek,P,V,goniec.M,kolor,&goniec);
                 break;
             case WIEZA:
                 wieza.M = glm::mat4(1.0f);
                 wieza.M=translate(wieza.M,vec3(0.8,1.2,0.8));
                 wieza.M=wieza.M=translate(wieza.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                drawObject(shaderProgramPionek,P,V,wieza.M,&wieza);
+                drawObject(shaderProgramPionek,P,V,wieza.M,kolor,&wieza);
                 break;
             case HETMAN:
                 hetman.M = glm::mat4(1.0f);
                 hetman.M=translate(hetman.M,vec3(0.8,2.9,0.8));
                 hetman.M=hetman.M=translate(hetman.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                drawObject(shaderProgramPionek,P,V,hetman.M,&hetman);
+                drawObject(shaderProgramPionek,P,V,hetman.M,kolor,&hetman);
                 break;
             case KROL:
                 krol.M = glm::mat4(1.0f);
                 krol.M=translate(krol.M,vec3(0.8,3.5,0.8));
                 krol.M=krol.M=translate(krol.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                drawObject(shaderProgramPionek,P,V,krol.M,&krol);
+                drawObject(shaderProgramPionek,P,V,krol.M,kolor,&krol);
                 break;
             }
         }
     }
     //Wylicz macierz modelu rysowanego obiektu
     szachownica.M= glm::mat4(1.0f);
-    drawObject(shaderProgramSzachownica,P,V,szachownica.M, &szachownica);
+    drawObject(shaderProgramSzachownica,P,V,szachownica.M,0,&szachownica);
 
     //Przerzuć tylny bufor na przedni
     glfwSwapBuffers(window);
