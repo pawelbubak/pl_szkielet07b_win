@@ -56,13 +56,17 @@ void prepareKrol();
 void prepareSkoczek();
 void prepareHetman();
 void wczytajGre();
+float fWysokosci(float x);
+int czasRuchu;
 
 
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
 float aspect=1; //Stosunek szerokości do wysokości okna
+float czasKlatki;
 
 int gra[8][8];
+int nextGame[8][8];
 Obj3d pionek;
 Obj3d skoczek;
 Obj3d goniec;
@@ -328,7 +332,18 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     V= rotate(V,-PI/4,vec3(1,0,0));
     V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
     V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
+    int a=7;
+    int b=4;
+    int x=4;
+    int y=5;
+    int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
 
+    float speed=2;
+    float czas=odleglosc/speed;
+    if(glfwGetTime()>=czas){
+        glfwSetTime(0);
+        czasKlatki=0;
+    }
     for (int i=0; i<8; i++)
     {
         for (int j=0; j<8; j++)
@@ -340,15 +355,17 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
             kolor=0;
             }
 
-
             switch (abs(gra[i][j]))
             {
             case 0:
                 break;
             case PIONEK:
                 pionek.M = glm::mat4(1.0f);
-                pionek.M=translate(pionek.M,vec3(0.8,0.9,0.8));
+                pionek.M=translate(pionek.M,vec3(0.8,1.3,0.8));
                 pionek.M=pionek.M=translate(pionek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                if(j==a&&i==b){
+                pionek.M=pionek.M=translate(pionek.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,sin((glfwGetTime()*PI)/czas)*3,1.6*(y-b)*(glfwGetTime()/czas)));
+                }
                 drawObject(shaderProgramPionek,P,V,pionek.M,kolor,&pionek);
                 break;
             case SKOCZEK:
@@ -359,31 +376,47 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                    if(gra[i][j]>0){
                 skoczek.M=rotate(skoczek.M,PI,vec3(0,1,0));
                 }
+                if(j==a&&i==b){
+                skoczek.M=skoczek.M=translate(skoczek.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,sin((glfwGetTime()*PI)/czas)*3,1.6*(y-b)*(glfwGetTime()/czas)));
+                }
                 drawObject(shaderProgramPionek,P,V,skoczek.M,kolor,&skoczek);
                 break;
             case GONIEC:
                 goniec.M = glm::mat4(1.0f);
                 goniec.M=translate(goniec.M,vec3(0.8,1.9,0.8));
                 goniec.M=goniec.M=translate(goniec.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                if(j==a&&i==b){
+                goniec.M=goniec.M=translate(goniec.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,sin((glfwGetTime()*PI)/czas)*3,1.6*(y-b)*(glfwGetTime()/czas)));
+                }
                 drawObject(shaderProgramPionek,P,V,goniec.M,kolor,&goniec);
                 break;
             case WIEZA:
                 wieza.M = glm::mat4(1.0f);
                 wieza.M=translate(wieza.M,vec3(0.8,1.2,0.8));
                 wieza.M=wieza.M=translate(wieza.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                if(j==a&&i==b){
+                wieza.M=wieza.M=translate(wieza.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,sin((glfwGetTime()*PI)/czas)*3,1.6*(y-b)*(glfwGetTime()/czas)));
+                }
                 drawObject(shaderProgramPionek,P,V,wieza.M,kolor,&wieza);
                 break;
             case HETMAN:
                 hetman.M = glm::mat4(1.0f);
                 hetman.M=translate(hetman.M,vec3(0.8,2.9,0.8));
                 hetman.M=hetman.M=translate(hetman.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                if(j==a&&i==b){
+                hetman.M=hetman.M=translate(hetman.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,fWysokosci((glfwGetTime()*1.647*2)/czas)/5,1.6*(y-b)*(glfwGetTime()/czas)));
+                }
                 drawObject(shaderProgramPionek,P,V,hetman.M,kolor,&hetman);
                 break;
             case KROL:
                 krol.M = glm::mat4(1.0f);
                 krol.M=translate(krol.M,vec3(0.8,3.5,0.8));
                 krol.M=krol.M=translate(krol.M,vec3((j-4)*1.6,0,(i-4)*1.6));
+                if(j==a&&i==b){
+                krol.M=krol.M=translate(krol.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,fWysokosci((glfwGetTime()*1.647*2)/czas)/5,1.6*(y-b)*(glfwGetTime()/czas)));
+                }
                 drawObject(shaderProgramPionek,P,V,krol.M,kolor,&krol);
+                cout<<fWysokosci(3.2);
                 break;
             }
         }
@@ -465,12 +498,12 @@ int main(void) {
     float angle_y = 0; //Kąt obrotu obiektu
 
     glfwSetTime(0); //Wyzeruj licznik czasu
-
     //Główna pętla
     while (!glfwWindowShouldClose(window)) { //Tak długo jak okno nie powinno zostać zamknięte
-        angle_x += speed_x*glfwGetTime(); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
-        angle_y += speed_y*glfwGetTime(); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
-        glfwSetTime(0); //Wyzeruj licznik czasu
+
+        angle_x += speed_x*(glfwGetTime()-czasKlatki); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
+        angle_y += speed_y*(glfwGetTime()-czasKlatki); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
+        czasKlatki=glfwGetTime(); //Wyzeruj licznik czasu
         drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
     }
@@ -523,4 +556,7 @@ void prepareHetman(){
     hetman.diffTexture=diffTexWood;
     hetman.normTexture=normalTexWood;
     hetman.heighTexture=heightTexWood;
+}
+float fWysokosci(float x){
+return -pow((x-1.647),6)+20;
 }
