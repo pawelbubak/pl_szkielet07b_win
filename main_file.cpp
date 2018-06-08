@@ -39,7 +39,6 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include "allmodels.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
-
 #include <iostream>
 #include <sstream>
 #include <fstream>
@@ -47,19 +46,14 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <tuple>
 #include "obj3d.h"
 
-
 using namespace glm;
 using namespace std;
 
-
-
-//########################################################################################################################
 void wczytajGre();
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
 
 float aspect=1; //Stosunek szerokości do wysokości okna
-
 
 int gra[8][8];
 Obj3d pionek;
@@ -69,9 +63,9 @@ Obj3d wieza;
 Obj3d hetman;
 Obj3d krol;
 Obj3d szachownica;
-GLuint  diffTexDrewno;
-GLuint normalTexDrewno;
-GLuint  heightTexDrewno;
+GLuint  diffTexWood;
+GLuint normalTexWood;
+GLuint  heightTexWood;
 
 GLuint  diffTexBricks;
 GLuint normalTexBricks;
@@ -86,11 +80,9 @@ GLuint bufC1; //Uchwyt na bufor VBO przechowujący pierwszą kolumnę moacierzy 
 GLuint bufC2; //Uchwyt na bufor VBO przechowujący drugą kolumnę moacierzy TBN^-1
 GLuint bufC3; //Uchwyt na bufor VBO przechowujący trzecią kolumnę moacierzy TBN^-1
 
-
 //Uchwyty na shadery
 ShaderProgram *shaderProgramPionek; //Wskaźnik na obiekt reprezentujący program cieniujący.
 ShaderProgram *shaderProgramSzachownica;
-
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description)
@@ -113,7 +105,6 @@ void key_callback(GLFWwindow* window, int key,
         if (key == GLFW_KEY_DOWN)
             speed_x = 3.14;
     }
-
 
     if (action == GLFW_RELEASE)
     {
@@ -223,12 +214,29 @@ void prepareObject(ShaderProgram *shaderProgram, Obj3d * model)
     glBindVertexArray(0); //Dezaktywuj VAO
 }
 
+void preparePawn(){
+    diffTexWood=readTexture("download.png");
+    normalTexWood=readTexture("wood_norm.png");
+    heightTexWood=readTexture("wood_height.png");
+
+    pionek.diffTexture=diffTexWood;
+    pionek.normTexture=normalTexWood;
+    pionek.heighTexture=heightTexWood;
+}
+
+void prepareBoard(){
+    diffTexBricks=readTexture("szachownica_diffuse.png");
+    normalTexBricks=readTexture("wood_norm.png");
+    heightTexBricks=readTexture("wood_height.png");
+
+    szachownica.diffTexture=diffTexBricks;
+    szachownica.normTexture=normalTexBricks;
+    szachownica.heighTexture=heightTexBricks;
+}
 
 //Procedura inicjująca
 void initOpenGLProgram(GLFWwindow* window)
 {
-
-
     //************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
     glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
     glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
@@ -241,21 +249,8 @@ void initOpenGLProgram(GLFWwindow* window)
     prepareObject(shaderProgramPionek,&pionek);
     prepareObject(shaderProgramSzachownica,&szachownica);
 
-    diffTexDrewno=readTexture("download.png");
-    normalTexDrewno=readTexture("wood_norm.png");
-    heightTexDrewno=readTexture("wood_height.png");
-
-    diffTexBricks=readTexture("szachownica_diffuse.png");
-    normalTexBricks=readTexture("wood_norm.png");
-    heightTexBricks=readTexture("wood_height.png");
-
-    pionek.diffTexture=diffTexDrewno;
-    pionek.normTexture=normalTexDrewno;
-    pionek.heighTexture=heightTexDrewno;
-
-    szachownica.diffTexture=diffTexBricks;
-    szachownica.normTexture=normalTexBricks;
-    szachownica.heighTexture=heightTexBricks;
+    prepareBoard();
+    preparePawn();
 
     wczytajGre();
 }
@@ -277,9 +272,9 @@ void freeOpenGLProgram()
     glDeleteBuffers(1,&bufC3);
 
     //Wykasuj tekstury
-    glDeleteTextures(1,&diffTexDrewno);
-    glDeleteTextures(1,&normalTexDrewno);
-    glDeleteTextures(1,&heightTexDrewno);
+    glDeleteTextures(1,&diffTexWood);
+    glDeleteTextures(1,&normalTexWood);
+    glDeleteTextures(1,&heightTexWood);
     //Wykasuj tekstury
     glDeleteTextures(1,&diffTexBricks);
     glDeleteTextures(1,&normalTexBricks);
