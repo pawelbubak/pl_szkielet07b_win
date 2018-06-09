@@ -184,8 +184,6 @@ void Obj3d::loadFromOBJ(string filename)
             }
         }
     koniec:
-        cout << licznik;
-
         suma=normalize(suma);
         vertexNormals.push_back(vec4(suma,0));
 

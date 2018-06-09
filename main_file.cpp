@@ -333,7 +333,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     glm::mat4 P = glm::perspective(50 * PI / 180, aspect, 1.0f, 50.0f); //Wylicz macierz rzutowania
 
     glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
-                      glm::vec3(0.0f, 0.0f, -20.0f),
+                      glm::vec3(0.0f, 0.0f, -35.0f),
                       glm::vec3(0.0f, 0.0f, 0.0f),
                       glm::vec3(0.0f, 1.0f, 0.0f));
     V= rotate(V,-PI/4,vec3(1,0,0));
@@ -423,7 +423,6 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
                 krol.M=krol.M=translate(krol.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,fWysokosci((glfwGetTime()*1.647*2)/czas)/5,1.6*(y-b)*(glfwGetTime()/czas)));
                 }
                 drawObject(shaderProgramPionek,P,V,krol.M,kolor,&krol);
-                cout<<fWysokosci(3.2);
                 break;
             }
         }
@@ -433,7 +432,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     drawObject(shaderProgramSzachownica,P,V,szachownica.M,0,&szachownica);
 
     stolik.M= glm::mat4(1.0f);
-    stolik.M = translate(stolik.M, vec3(0,-8,0));
+    stolik.M = translate(stolik.M, vec3(0,-8.5,0));
     drawObject(shaderProgramStolik,P,V,stolik.M,0,&stolik);
 
     //Przerzuć tylny bufor na przedni
