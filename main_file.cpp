@@ -55,6 +55,7 @@ void prepareGoniec();
 void prepareKrol();
 void prepareSkoczek();
 void prepareHetman();
+void prepareStolik();
 void wczytajGre();
 float fWysokosci(float x);
 int czasRuchu;
@@ -74,6 +75,7 @@ Obj3d wieza;
 Obj3d hetman;
 Obj3d krol;
 Obj3d szachownica;
+Obj3d stolik;
 
 GLuint diffTexWood;
 GLuint normalTexWood;
@@ -81,6 +83,8 @@ GLuint heightTexWood;
 GLuint diffTexBricks;
 GLuint normalTexBricks;
 GLuint heightTexBricks;
+GLuint diffTexStolik;
+GLuint normalTexStolik;
 
 //Uchwyty na VAO i bufory wierzchołków
 GLuint bufVertices; //Uchwyt na bufor VBO przechowujący tablicę współrzędnych wierzchołków
@@ -94,6 +98,7 @@ GLuint bufC3; //Uchwyt na bufor VBO przechowujący trzecią kolumnę moacierzy T
 ShaderProgram *shaderProgramPionek; //Wskaźnik na obiekt reprezentujący program cieniujący.
 ShaderProgram *shaderProgramSzachownica;
 ShaderProgram *shaderProgramWieza;
+ShaderProgram *shaderProgramStolik;
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description) {
@@ -223,7 +228,7 @@ void initOpenGLProgram(GLFWwindow* window)
     shaderProgramPionek=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl"); //Wczytaj program cieniujący
     shaderProgramSzachownica=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
     shaderProgramWieza=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
-
+    shaderProgramStolik=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
 
 
     prepareObject(shaderProgramPionek,&pionek);
@@ -233,6 +238,7 @@ void initOpenGLProgram(GLFWwindow* window)
     prepareObject(shaderProgramWieza,&krol);
     prepareObject(shaderProgramWieza,&skoczek);
     prepareObject(shaderProgramWieza,&goniec);
+    prepareObject(shaderProgramStolik,&stolik);
 
 
     prepareBoard();
@@ -242,6 +248,7 @@ void initOpenGLProgram(GLFWwindow* window)
     prepareHetman();
     prepareKrol();
     prepareSkoczek();
+    prepareStolik();
 
     wczytajGre();
 }
@@ -425,6 +432,10 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     szachownica.M= glm::mat4(1.0f);
     drawObject(shaderProgramSzachownica,P,V,szachownica.M,0,&szachownica);
 
+    stolik.M= glm::mat4(1.0f);
+    stolik.M = translate(stolik.M, vec3(0,-8,0));
+    drawObject(shaderProgramStolik,P,V,stolik.M,0,&stolik);
+
     //Przerzuć tylny bufor na przedni
     glfwSwapBuffers(window);
 }
@@ -468,6 +479,7 @@ int main(void) {
     krol.loadFromOBJ("krol.obj");
     goniec.loadFromOBJ("goniec.obj");
     skoczek.loadFromOBJ("skoczek.obj");
+    stolik.loadFromOBJ("stolik.obj");
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
@@ -556,6 +568,13 @@ void prepareHetman(){
     hetman.diffTexture=diffTexWood;
     hetman.normTexture=normalTexWood;
     hetman.heighTexture=heightTexWood;
+}
+void prepareStolik(){
+    diffTexStolik=readTexture("WoodFineDark004_diffuse.png");
+    normalTexStolik=readTexture("WoodFineDark004_norm.png");
+    stolik.diffTexture=diffTexStolik;
+    stolik.normTexture=normalTexStolik;
+    stolik.heighTexture=heightTexWood;
 }
 float fWysokosci(float x){
 return -pow((x-1.647),6)+20;
