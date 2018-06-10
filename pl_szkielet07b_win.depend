@@ -2360,7 +2360,7 @@
 	<iostream>
 	"lodepng.h"
 
-1528578136 source:c:\users\dom\documents\github\pl_szkielet07b_win\main_file.cpp
+1528650852 source:c:\users\dom\documents\github\pl_szkielet07b_win\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>

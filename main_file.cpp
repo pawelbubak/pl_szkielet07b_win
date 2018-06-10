@@ -58,8 +58,16 @@ void prepareHetman();
 void prepareStolik();
 void wczytajGre();
 float fWysokosci(float x);
-int czasRuchu;
+void ruch(Obj3d * model,int i, int j, int a, int b, int x, int y, float czas);
 
+
+int czasRuchu;
+int a; //pozycja poczatkowa
+int b;
+int x; //pozycja doecelowa
+int y;
+int dalej;
+int koniec;
 
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
@@ -101,13 +109,16 @@ ShaderProgram *shaderProgramWieza;
 ShaderProgram *shaderProgramStolik;
 
 //Procedura obsługi błędów
-void error_callback(int error, const char* description) {
+void error_callback(int error, const char* description)
+{
     fputs(description, stderr);
 }
 
 //Procedura obsługi klawiatury
-void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods) {
-    if (action == GLFW_PRESS) {
+void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+{
+    if (action == GLFW_PRESS)
+    {
         if (key == GLFW_KEY_LEFT)
             speed_y = -3.14;
         if (key == GLFW_KEY_RIGHT)
@@ -117,7 +128,8 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
         if (key == GLFW_KEY_DOWN)
             speed_x = 3.14;
     }
-    if (action == GLFW_RELEASE) {
+    if (action == GLFW_RELEASE)
+    {
         if (key == GLFW_KEY_LEFT)
             speed_y = 0;
         if (key == GLFW_KEY_RIGHT)
@@ -130,17 +142,22 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
 }
 
 //Procedura obługi zmiany rozmiaru bufora ramki
-void windowResize(GLFWwindow* window, int width, int height) {
+void windowResize(GLFWwindow* window, int width, int height)
+{
     glViewport(0, 0, width, height); //Obraz ma być generowany w oknie o tej rozdzielczości
-    if (height!=0) {
+    if (height!=0)
+    {
         aspect=(float)width/(float)height; //Stosunek szerokości do wysokości okna
-    } else {
+    }
+    else
+    {
         aspect=1;
     }
 }
 
 
-GLuint readTexture(char* filename) {
+GLuint readTexture(char* filename)
+{
     GLuint tex;
     glActiveTexture(GL_TEXTURE0);
 
@@ -164,7 +181,8 @@ GLuint readTexture(char* filename) {
 
 
 //Tworzy bufor VBO z tablicy
-GLuint makeBuffer(void *data, int vertexCount, int vertexSize) {
+GLuint makeBuffer(void *data, int vertexCount, int vertexSize)
+{
     GLuint handle;
 
     glGenBuffers(1,&handle);//Wygeneruj uchwyt na Vertex Buffer Object (VBO), który będzie zawierał tablicę danych
@@ -175,7 +193,8 @@ GLuint makeBuffer(void *data, int vertexCount, int vertexSize) {
 }
 
 //Przypisuje bufor VBO do atrybutu
-void assignVBOtoAttribute(ShaderProgram *shaderProgram,const char* attributeName, GLuint bufVBO, int vertexSize) {
+void assignVBOtoAttribute(ShaderProgram *shaderProgram,const char* attributeName, GLuint bufVBO, int vertexSize)
+{
     GLuint location=shaderProgram->getAttribLocation(attributeName); //Pobierz numer slotu dla atrybutu
     glBindBuffer(GL_ARRAY_BUFFER,bufVBO);  //Uaktywnij uchwyt VBO
     glEnableVertexAttribArray(location); //Włącz używanie atrybutu o numerze slotu zapisanym w zmiennej location
@@ -339,27 +358,24 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     V= rotate(V,-PI/4,vec3(1,0,0));
     V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
     V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
-    int a=7;
-    int b=4;
-    int x=4;
-    int y=5;
+
     int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
 
-    float speed=2;
-    float czas=odleglosc/speed;
-    if(glfwGetTime()>=czas){
-        glfwSetTime(0);
-        czasKlatki=0;
-    }
+    float speed=1;
+    float czas=2;//odleglosc/speed;
+
     for (int i=0; i<8; i++)
     {
         for (int j=0; j<8; j++)
         {
             int kolor;
-            if (gra[i][j]<0){
+            if (gra[i][j]<0)
+            {
                 kolor=1;
-            }else{
-            kolor=0;
+            }
+            else
+            {
+                kolor=0;
             }
 
             switch (abs(gra[i][j]))
@@ -369,64 +385,57 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
             case PIONEK:
                 pionek.M = glm::mat4(1.0f);
                 pionek.M=translate(pionek.M,vec3(0.8,1.3,0.8));
-                pionek.M=pionek.M=translate(pionek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                if(j==a&&i==b){
-                pionek.M=pionek.M=translate(pionek.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,sin((glfwGetTime()*PI)/czas)*3,1.6*(y-b)*(glfwGetTime()/czas)));
-                }
+                ruch(&pionek,i,  j,  a,  b,  x,  y,  czas);
                 drawObject(shaderProgramPionek,P,V,pionek.M,kolor,&pionek);
                 break;
             case SKOCZEK:
-
                 skoczek.M = glm::mat4(1.0f);
                 skoczek.M=translate(skoczek.M,vec3(0.8,1.3,0.8));
-                skoczek.M=translate(skoczek.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                   if(gra[i][j]>0){
-                skoczek.M=rotate(skoczek.M,PI,vec3(0,1,0));
-                }
-                if(j==a&&i==b){
-                skoczek.M=skoczek.M=translate(skoczek.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,sin((glfwGetTime()*PI)/czas)*3,1.6*(y-b)*(glfwGetTime()/czas)));
-                }
+                ruch(&skoczek,i,  j,  a,  b,  x,  y,  czas);
+                if(gra[i][j]>0)
+                    skoczek.M=rotate(skoczek.M,PI,vec3(0,1,0));
                 drawObject(shaderProgramPionek,P,V,skoczek.M,kolor,&skoczek);
                 break;
             case GONIEC:
                 goniec.M = glm::mat4(1.0f);
                 goniec.M=translate(goniec.M,vec3(0.8,1.9,0.8));
-                goniec.M=goniec.M=translate(goniec.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                if(j==a&&i==b){
-                goniec.M=goniec.M=translate(goniec.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,sin((glfwGetTime()*PI)/czas)*3,1.6*(y-b)*(glfwGetTime()/czas)));
-                }
+                ruch(&goniec,i,  j,  a,  b,  x,  y,  czas);
                 drawObject(shaderProgramPionek,P,V,goniec.M,kolor,&goniec);
                 break;
             case WIEZA:
                 wieza.M = glm::mat4(1.0f);
                 wieza.M=translate(wieza.M,vec3(0.8,1.2,0.8));
-                wieza.M=wieza.M=translate(wieza.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                if(j==a&&i==b){
-                wieza.M=wieza.M=translate(wieza.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,sin((glfwGetTime()*PI)/czas)*3,1.6*(y-b)*(glfwGetTime()/czas)));
-                }
+                ruch(&wieza,i,  j,  a,  b,  x,  y,  czas);
                 drawObject(shaderProgramPionek,P,V,wieza.M,kolor,&wieza);
                 break;
             case HETMAN:
                 hetman.M = glm::mat4(1.0f);
                 hetman.M=translate(hetman.M,vec3(0.8,2.9,0.8));
-                hetman.M=hetman.M=translate(hetman.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                if(j==a&&i==b){
-                hetman.M=hetman.M=translate(hetman.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,fWysokosci((glfwGetTime()*1.647*2)/czas)/5,1.6*(y-b)*(glfwGetTime()/czas)));
-                }
+                ruch(&hetman,i,  j,  a,  b,  x,  y,  czas);
                 drawObject(shaderProgramPionek,P,V,hetman.M,kolor,&hetman);
                 break;
             case KROL:
                 krol.M = glm::mat4(1.0f);
                 krol.M=translate(krol.M,vec3(0.8,3.5,0.8));
-                krol.M=krol.M=translate(krol.M,vec3((j-4)*1.6,0,(i-4)*1.6));
-                if(j==a&&i==b){
-                krol.M=krol.M=translate(krol.M,vec3((x-a)*(glfwGetTime()/czas)*1.6,fWysokosci((glfwGetTime()*1.647*2)/czas)/5,1.6*(y-b)*(glfwGetTime()/czas)));
-                }
+                ruch(&krol,i,  j,  a,  b,  x,  y,  czas);
                 drawObject(shaderProgramPionek,P,V,krol.M,kolor,&krol);
                 break;
             }
         }
     }
+    if (czas<=glfwGetTime()&&!koniec)
+    {
+        dalej=1;
+        gra[x][y]=gra[a][b];
+        gra[a][b]=0;
+    }
+    if(dalej)
+    {
+        glfwSetTime(0);
+        czasKlatki=0;
+    }
+
+
     //Wylicz macierz modelu rysowanego obiektu
     szachownica.M= glm::mat4(1.0f);
     drawObject(shaderProgramSzachownica,P,V,szachownica.M,0,&szachownica);
@@ -435,8 +444,21 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     stolik.M = translate(stolik.M, vec3(0,-8.5,0));
     drawObject(shaderProgramStolik,P,V,stolik.M,0,&stolik);
 
+
     //Przerzuć tylny bufor na przedni
     glfwSwapBuffers(window);
+}
+void ruch(Obj3d* model,int i, int j, int a, int b, int x, int y, float czas)
+{
+    model->M=translate(model->M,vec3((j-4)*1.6,0,(i-4)*1.6));
+    if(j==b&&i==a) // Ruch z a b  na miejsce x y
+    {
+        model->M=model->M=translate(model->M,vec3((y-b)*(glfwGetTime()/czas)*1.6,fWysokosci(((glfwGetTime()/czas)*1.647*2))/5,1.6*(x-a)*(glfwGetTime()/czas)));
+    }
+    if(j==y&& i==x) // zbicie na x y
+    {
+        model->M=model->M=translate(model->M,vec3((10-b)*(glfwGetTime()/czas)*1.6,fWysokosci((glfwGetTime()*1.647*2)/czas)/3,1.6*(10-a)*(glfwGetTime()/czas)));
+    }
 }
 
 void wczytajGre()
@@ -470,7 +492,8 @@ void wczytajGre()
     gra[4][7]=-KROL;
 }
 
-int main(void) {
+int main(void)
+{
     pionek.loadFromOBJ("pionek.obj");
     szachownica.loadFromOBJ("szachownica.obj");
     wieza.loadFromOBJ("wieza.obj");
@@ -482,14 +505,16 @@ int main(void) {
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
-    if (!glfwInit()) {  //Zainicjuj bibliotekę GLFW
+    if (!glfwInit())    //Zainicjuj bibliotekę GLFW
+    {
         fprintf(stderr, "Nie można zainicjować GLFW.\n");
         exit(EXIT_FAILURE);
     }
 
     window = glfwCreateWindow(500, 500, "OpenGL", NULL, NULL);  //Utwórz okno 500x500 o tytule "OpenGL" i kontekst OpenGL.
 
-    if (!window) { //Jeżeli okna nie udało się utworzyć, to zamknij program
+    if (!window)   //Jeżeli okna nie udało się utworzyć, to zamknij program
+    {
         fprintf(stderr, "Nie można utworzyć okna.\n");
         glfwTerminate();
         exit(EXIT_FAILURE);
@@ -498,10 +523,21 @@ int main(void) {
     glfwMakeContextCurrent(window); //Od tego momentu kontekst okna staje się aktywny i polecenia OpenGL będą dotyczyć właśnie jego.
     glfwSwapInterval(1); //Czekaj na 1 powrót plamki przed pokazaniem ukrytego bufora
 
-    if (glewInit() != GLEW_OK) {  //Zainicjuj bibliotekę GLEW
+    if (glewInit() != GLEW_OK)    //Zainicjuj bibliotekę GLEW
+    {
         fprintf(stderr, "Nie można zainicjować GLEW.\n");
         exit(EXIT_FAILURE);
     }
+
+    ifstream plik;
+
+    plik.open("gra.txt");
+    if (!plik.good())
+    {
+        fprintf(stderr, "Nie można wczytać pliku gry\n");
+        exit(EXIT_FAILURE);
+    }
+
 
     initOpenGLProgram(window); //Operacje inicjujące
 
@@ -509,14 +545,29 @@ int main(void) {
     float angle_y = 0; //Kąt obrotu obiektu
 
     glfwSetTime(0); //Wyzeruj licznik czasu
+    dalej=1;
     //Główna pętla
-    while (!glfwWindowShouldClose(window)) { //Tak długo jak okno nie powinno zostać zamknięte
+    while (!glfwWindowShouldClose(window))   //Tak długo jak okno nie powinno zostać zamknięte
+    {
+
+        if(dalej)
+        {
+            dalej=0;
+            plik >> a >> b >> x >> y;
+            cout<<a<<b<<x<<y<<endl;
+        }
+        if (!plik.good())
+        {
+            koniec=1;
+            a=b=x=y=-1;
+        }
 
         angle_x += speed_x*(glfwGetTime()-czasKlatki); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
         angle_y += speed_y*(glfwGetTime()-czasKlatki); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
         czasKlatki=glfwGetTime(); //Wyzeruj licznik czasu
         drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
+
     }
     freeOpenGLProgram();
     glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
@@ -524,7 +575,8 @@ int main(void) {
     exit(EXIT_SUCCESS);
 }
 
-void preparePawn(){
+void preparePawn()
+{
     diffTexWood=readTexture("download.png");
     normalTexWood=readTexture("wood_norm.png");
     heightTexWood=readTexture("wood_height.png");
@@ -534,7 +586,8 @@ void preparePawn(){
     pionek.heighTexture=heightTexWood;
 }
 
-void prepareBoard(){
+void prepareBoard()
+{
     diffTexBricks=readTexture("szachownica_diffuse.png");
     normalTexBricks=readTexture("wood_norm.png");
     heightTexBricks=readTexture("wood_height.png");
@@ -543,38 +596,46 @@ void prepareBoard(){
     szachownica.normTexture=normalTexBricks;
     szachownica.heighTexture=heightTexBricks;
 }
-void prepareWieza(){
+void prepareWieza()
+{
     wieza.diffTexture=diffTexWood;
     wieza.normTexture=normalTexWood;
     wieza.heighTexture=heightTexWood;
 }
-void prepareSkoczek(){
+void prepareSkoczek()
+{
     skoczek.diffTexture=diffTexWood;
     skoczek.normTexture=normalTexWood;
     skoczek.heighTexture=heightTexWood;
 }
-void prepareGoniec(){
+void prepareGoniec()
+{
     goniec.diffTexture=diffTexWood;
     goniec.normTexture=normalTexWood;
     goniec.heighTexture=heightTexWood;
 }
-void prepareKrol(){
+void prepareKrol()
+{
     krol.diffTexture=diffTexWood;
     krol.normTexture=normalTexWood;
     krol.heighTexture=heightTexWood;
 }
-void prepareHetman(){
+void prepareHetman()
+{
     hetman.diffTexture=diffTexWood;
     hetman.normTexture=normalTexWood;
     hetman.heighTexture=heightTexWood;
 }
-void prepareStolik(){
+void prepareStolik()
+{
     diffTexStolik=readTexture("WoodFineDark004_diffuse.png");
     normalTexStolik=readTexture("WoodFineDark004_norm.png");
     stolik.diffTexture=diffTexStolik;
     stolik.normTexture=normalTexStolik;
     stolik.heighTexture=heightTexWood;
 }
-float fWysokosci(float x){
-return -pow((x-1.647),6)+20;
+
+float fWysokosci(float x)
+{
+    return -pow((x-1.647),6)+20;
 }
