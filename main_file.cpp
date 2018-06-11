@@ -362,7 +362,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
 
     float speed=1;
-    float czas=2;//odleglosc/speed;
+    float czas=2;// odleglosc/speed;
 
     for (int i=0; i<8; i++)
     {
@@ -555,6 +555,10 @@ int main(void)
             dalej=0;
             plik >> a >> b >> x >> y;
             cout<<a<<b<<x<<y<<endl;
+            a-=1;
+            b-=1;
+            x-=1;
+            y-=1;
         }
         if (!plik.good())
         {
