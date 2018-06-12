@@ -11,7 +11,7 @@ void main()
 {
     TexCoords = aPos.xyz;
 
-    gl_Position = V*P*vec4(aPos.xyz,1);
+    gl_Position = P*V*vec4(aPos.xyz,0.5);
 }
 
 

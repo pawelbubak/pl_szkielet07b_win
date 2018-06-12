@@ -220,9 +220,16 @@ GLuint loadCubemap(vector<std::string> faces)
     GLuint textureID;
     glActiveTexture(GL_TEXTURE0);
     glGenTextures(1, &textureID);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
 
-    for (unsigned int i = 0; i < faces.size(); i++)
+glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_BASE_LEVEL, 0);
+glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAX_LEVEL, 0);
+    for (unsigned int i = 0; i < 6; i++)
     {
     unsigned width, height;
     std::vector<unsigned char> image;   //Alokuj wektor do wczytania obrazka
@@ -233,14 +240,13 @@ GLuint loadCubemap(vector<std::string> faces)
      }
 
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                         0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,(unsigned char*)  image.data());
+                         0, 4, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,(unsigned char*)  image.data());
+
     }
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+
+
     return  textureID;
+
 }
 
 GLuint readTexture(char* filename)
@@ -327,6 +333,7 @@ void initOpenGLProgram(GLFWwindow* window)
     //************Tutaj umieszczaj kod, który należy wykonać raz, na początku programu************
     glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
     glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
+    glEnable(GL_STENCIL_TEST);
     glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
     glfwSetFramebufferSizeCallback(window,windowResize); //Zarejestruj procedurę obsługi zmiany rozmiaru bufora ramki
 
@@ -433,13 +440,7 @@ void drawObject(ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM,float ko
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window, float angle_x, float angle_y)
 {
-    //************Tutaj umieszczaj kod rysujący obraz******************l
-
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów i głębokości
-
-    glm::mat4 P = glm::perspective(20 * PI / 180, aspect, 1.0f, 50.0f); //Wylicz macierz rzutowania
-
-
+    glm::mat4 P = glm::perspective(60 * PI / 180, aspect, 1.0f, 50.0f); //Wylicz macierz rzutowania
     glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
                       glm::vec3(0.0f, 0.0f, -35.0f),
                       glm::vec3(0.0f, 0.0f, 0.0f),
@@ -448,36 +449,123 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     V= rotate(V,-PI/4,vec3(1,0,0));
     V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
     V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
-    V =(mat4(mat3(V)));
+
+    if(true){//odbica
 
 
+    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów i głębokości
+
+glEnable(GL_STENCIL_TEST);
+     // Draw floor
+    glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
+    glStencilMask(0xFF); // Write to stencil buffer
+    glDepthMask(GL_FALSE);
+    // Don't write to depth buffer
+    glClear(GL_STENCIL_BUFFER_BIT); // Clear stencil buffer (0 by default)
+   // glColorMask(GL_FALSE, GL_FALSE, GL_FALSE, GL_FALSE);
 
 
+    szachownica.M= glm::mat4(1.0f);
+    drawObject(shaderProgramSzachownica,P,V,szachownica.M,0,&szachownica);
+
+
+    glStencilFunc(GL_EQUAL, 1, 0xFF); // Pass test if stencil value is 1
+    glStencilMask(0x00); // Don't write anything to stencil buffer
+    glDepthMask(GL_FALSE); // Write to depth buffer
+
+    int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
+    float speed=1;
+    float czas=2;//odleglosc/speed;
+
+    for (int i=0; i<8; i++)
+    {
+        for (int j=0; j<8; j++)
+        {
+            int kolor;
+            if (gra[i][j]<0)
+            {
+                kolor=1;
+            }
+            else
+            {
+                kolor=0;
+            }
+
+            switch (abs(gra[i][j]))
+            {
+            case 0:
+                break;
+            case PIONEK:
+                pionek.M = glm::mat4(1.0f);
+                pionek.M=translate(pionek.M,vec3(0.8,1.3,0.8));
+                ruch(&pionek,i,  j,  a,  b,  x,  y,  czas);
+                pionek.M = glm::scale(translate(pionek.M, glm::vec3(0, 0, -1)),vec3(1, -1, 1));
+                drawObject(shaderProgramPionek,P,V,pionek.M,kolor,&pionek);
+                break;
+            case SKOCZEK:
+                skoczek.M = glm::mat4(1.0f);
+                skoczek.M=translate(skoczek.M,vec3(0.8,1.3,0.8));
+                ruch(&skoczek,i,  j,  a,  b,  x,  y,  czas);
+                if(gra[i][j]>0)
+                    skoczek.M=rotate(skoczek.M,PI,vec3(0,1,0));
+                skoczek.M = glm::scale(translate(skoczek.M, glm::vec3(0, 0, -1)),vec3(1, -1, -1));
+                drawObject(shaderProgramPionek,P,V,skoczek.M,kolor,&skoczek);
+                break;
+            case GONIEC:
+                goniec.M = glm::mat4(1.0f);
+                goniec.M=translate(goniec.M,vec3(0.8,1.9,0.8));
+                ruch(&goniec,i,  j,  a,  b,  x,  y,  czas);
+                goniec.M = glm::scale(translate(goniec.M, glm::vec3(0, 0, -1)),vec3(1, -1, -1));
+                drawObject(shaderProgramPionek,P,V,goniec.M,kolor,&goniec);
+                break;
+            case WIEZA:
+                wieza.M = glm::mat4(1.0f);
+                wieza.M=translate(wieza.M,vec3(0.8,1.2,0.8));
+                ruch(&wieza,i,  j,  a,  b,  x,  y,  czas);
+                wieza.M = glm::scale(translate(wieza.M, glm::vec3(0, 0, -1)),vec3(1, -1, -1));
+                drawObject(shaderProgramPionek,P,V,wieza.M,kolor,&wieza);
+                break;
+            case HETMAN:
+                hetman.M = glm::mat4(1.0f);
+                hetman.M=translate(hetman.M,vec3(0.8,2.9,0.8));
+                ruch(&hetman,i,  j,  a,  b,  x,  y,  czas);
+                hetman.M = glm::scale(translate(hetman.M, glm::vec3(0, 0, -1)),vec3(1,-1, -1));
+                drawObject(shaderProgramPionek,P,V,hetman.M,kolor,&hetman);
+                break;
+            case KROL:
+                krol.M = glm::mat4(1.0f);
+                krol.M=translate(krol.M,vec3(0.8,3.5,0.8));
+                ruch(&krol,i,  j,  a,  b,  x,  y,  czas);
+                krol.M = glm::scale(translate(krol.M, glm::vec3(0, 0, -1)),vec3(1, 1, -1));
+                drawObject(shaderProgramPionek,P,V,krol.M,kolor,&krol);
+                break;
+            }
+        }
+    }
+    }
+    glDepthMask(GL_TRUE);
+  glDisable(GL_STENCIL_TEST);
+
+
+    if(true){
     glDepthMask(GL_FALSE);
     shaderSkyBox->use();
     glUniformMatrix4fv(shaderSkyBox->getUniformLocation("P"),1, false, glm::value_ptr(P));
-    glUniformMatrix4fv(shaderSkyBox->getUniformLocation("V"),1, false, glm::value_ptr(V));
+    glUniformMatrix4fv(shaderSkyBox->getUniformLocation("V"),1, false, glm::value_ptr((mat4(mat3(V)))));
     bufVertices=makeBuffer(skyboxVertices, 36, sizeof(float)*4);
     glGenVertexArrays(1,&(skyboxVAO));
     glBindVertexArray(skyboxVAO);
     assignVBOtoAttribute(shaderSkyBox,"aPos",bufVertices,4);
 
-
-    glUniform1i(shaderSkyBox->getUniformLocation("skybox"),3);
-    glActiveTexture(GL_TEXTURE3);
+    glUniform1i(shaderSkyBox->getUniformLocation("skybox"),0);
+    glActiveTexture(GL_TEXTURE0);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
 
     glDrawArrays(GL_TRIANGLES, 0, 36);
+
     glDepthMask(GL_TRUE);
-    V = glm::lookAt( //Wylicz macierz widoku
-                      glm::vec3(0.0f, 0.0f, -35.0f),
-                      glm::vec3(0.0f, 0.0f, 0.0f),
-                      glm::vec3(0.0f, 1.0f, 0.0f));
-    V= rotate(V,-PI/4,vec3(1,0,0));
-    V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
-    V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
-
-
+     glClear(GL_DEPTH_BUFFER_BIT);
 
     int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
 
@@ -564,7 +652,8 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     stolik.M= glm::mat4(1.0f);
     stolik.M = translate(stolik.M, vec3(0,-8.5,0));
     drawObject(shaderProgramStolik,P,V,stolik.M,0,&stolik);
-    //Przerzuć tylny bufor na przedni
+    }
+
     glfwSwapBuffers(window);
 }
 void ruch(Obj3d* model,int i, int j, int a, int b, int x, int y, float czas)
