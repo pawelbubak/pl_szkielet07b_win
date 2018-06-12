@@ -59,6 +59,20 @@ void prepareStolik();
 void wczytajGre();
 float fWysokosci(float x);
 void ruch(Obj3d * model,int i, int j, int a, int b, int x, int y, float czas);
+GLuint loadCubemap(vector<std::string> faces);
+
+    vector<std::string> faces{
+    "right.png",
+    "left.png",
+    "top.png",
+    "bottom.png",
+    "front.png",
+    "back.png"
+};
+
+
+GLuint cubemapTexture ;
+GLuint skyboxVAO;
 
 
 int czasRuchu;
@@ -107,6 +121,52 @@ ShaderProgram *shaderProgramPionek; //Wskaźnik na obiekt reprezentujący progra
 ShaderProgram *shaderProgramSzachownica;
 ShaderProgram *shaderProgramWieza;
 ShaderProgram *shaderProgramStolik;
+ShaderProgram *shaderSkyBox;
+
+float skyboxVertices[] = {
+    // positions
+    -1.0f,  1.0f, -1.0f, 0.00f,
+    -1.0f, -1.0f, -1.0f, 0.00f,
+     1.0f, -1.0f, -1.0f, 0.00f,
+     1.0f, -1.0f, -1.0f, 0.00f,
+     1.0f,  1.0f, -1.0f, 0.00f,
+    -1.0f,  1.0f, -1.0f,0.00f,
+
+    -1.0f, -1.0f,  1.0f,0.00f,
+    -1.0f, -1.0f, -1.0f,0.00f,
+    -1.0f,  1.0f, -1.0f,0.00f,
+    -1.0f,  1.0f, -1.0f,0.00f,
+    -1.0f,  1.0f,  1.0f,0.00f,
+    -1.0f, -1.0f,  1.0f,0.00f,
+
+     1.0f, -1.0f, -1.0f,0.00f,
+     1.0f, -1.0f,  1.0f,0.00f,
+     1.0f,  1.0f,  1.0f,0.00f,
+     1.0f,  1.0f,  1.0f,0.00f,
+     1.0f,  1.0f, -1.0f,0.00f,
+     1.0f, -1.0f, -1.0f,0.00f,
+
+    -1.0f, -1.0f,  1.0f,0.00f,
+    -1.0f,  1.0f,  1.0f,0.00f,
+     1.0f,  1.0f,  1.0f,0.00f,
+     1.0f,  1.0f,  1.0f,0.00f,
+     1.0f, -1.0f,  1.0f,0.00f,
+    -1.0f, -1.0f,  1.0f,0.00f,
+
+    -1.0f,  1.0f, -1.0f,0.00f,
+     1.0f,  1.0f, -1.0f,0.00f,
+     1.0f,  1.0f,  1.0f,0.00f,
+     1.0f,  1.0f,  1.0f,0.00f,
+    -1.0f,  1.0f,  1.0f,0.00f,
+    -1.0f,  1.0f, -1.0f,0.00f,
+
+    -1.0f, -1.0f, -1.0f,0.00f,
+    -1.0f, -1.0f,  1.0f,0.00f,
+     1.0f, -1.0f, -1.0f,0.00f,
+     1.0f, -1.0f, -1.0f,0.00f,
+    -1.0f, -1.0f,  1.0f,0.00f,
+     1.0f, -1.0f,  1.0f,0.00f
+};
 
 //Procedura obsługi błędów
 void error_callback(int error, const char* description)
@@ -155,6 +215,33 @@ void windowResize(GLFWwindow* window, int width, int height)
     }
 }
 
+GLuint loadCubemap(vector<std::string> faces)
+{
+    GLuint textureID;
+    glActiveTexture(GL_TEXTURE0);
+    glGenTextures(1, &textureID);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, textureID);
+
+    for (unsigned int i = 0; i < faces.size(); i++)
+    {
+    unsigned width, height;
+    std::vector<unsigned char> image;   //Alokuj wektor do wczytania obrazka
+    //Zmienne do których wczytamy wymiary obrazka
+    //Wczytaj obrazek
+     if( lodepng::decode(image, width, height, faces[i].c_str())){
+        cout << "Blad wczytanie skybox"<<endl;
+     }
+
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
+                         0, GL_RGB, width, height, 0, GL_RGBA, GL_UNSIGNED_BYTE,(unsigned char*)  image.data());
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    return  textureID;
+}
 
 GLuint readTexture(char* filename)
 {
@@ -231,7 +318,6 @@ void prepareObject(ShaderProgram *shaderProgram, Obj3d * model)
     assignVBOtoAttribute(shaderProgram,"c1",bufC1,4); //"c1" odnosi się do deklaracji "in vec4 c1;" w vertex shaderze
     assignVBOtoAttribute(shaderProgram,"c2",bufC2,4); //"c2" odnosi się do deklaracji "in vec4 c2;" w vertex shaderze
     assignVBOtoAttribute(shaderProgram,"c3",bufC3,4); //"c3" odnosi się do deklaracji "in vec4 c3;" w vertex shaderze
-
     glBindVertexArray(0); //Dezaktywuj VAO
 }
 
@@ -248,6 +334,7 @@ void initOpenGLProgram(GLFWwindow* window)
     shaderProgramSzachownica=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
     shaderProgramWieza=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
     shaderProgramStolik=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl");
+    shaderSkyBox=new ShaderProgram("vshaderSkyBox.glsl",NULL,"fshaderSkyBox.glsl");
 
 
     prepareObject(shaderProgramPionek,&pionek);
@@ -258,6 +345,7 @@ void initOpenGLProgram(GLFWwindow* window)
     prepareObject(shaderProgramWieza,&skoczek);
     prepareObject(shaderProgramWieza,&goniec);
     prepareObject(shaderProgramStolik,&stolik);
+    cubemapTexture =loadCubemap(faces);
 
 
     prepareBoard();
@@ -349,15 +437,47 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów i głębokości
 
-    glm::mat4 P = glm::perspective(50 * PI / 180, aspect, 1.0f, 50.0f); //Wylicz macierz rzutowania
+    glm::mat4 P = glm::perspective(20 * PI / 180, aspect, 1.0f, 50.0f); //Wylicz macierz rzutowania
+
 
     glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
+                      glm::vec3(0.0f, 0.0f, -35.0f),
+                      glm::vec3(0.0f, 0.0f, 0.0f),
+                      glm::vec3(0.0f, 1.0f, 0.0f));
+
+    V= rotate(V,-PI/4,vec3(1,0,0));
+    V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
+    V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
+    V =(mat4(mat3(V)));
+
+
+
+
+    glDepthMask(GL_FALSE);
+    shaderSkyBox->use();
+    glUniformMatrix4fv(shaderSkyBox->getUniformLocation("P"),1, false, glm::value_ptr(P));
+    glUniformMatrix4fv(shaderSkyBox->getUniformLocation("V"),1, false, glm::value_ptr(V));
+    bufVertices=makeBuffer(skyboxVertices, 36, sizeof(float)*4);
+    glGenVertexArrays(1,&(skyboxVAO));
+    glBindVertexArray(skyboxVAO);
+    assignVBOtoAttribute(shaderSkyBox,"aPos",bufVertices,4);
+
+
+    glUniform1i(shaderSkyBox->getUniformLocation("skybox"),3);
+    glActiveTexture(GL_TEXTURE3);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemapTexture);
+
+    glDrawArrays(GL_TRIANGLES, 0, 36);
+    glDepthMask(GL_TRUE);
+    V = glm::lookAt( //Wylicz macierz widoku
                       glm::vec3(0.0f, 0.0f, -35.0f),
                       glm::vec3(0.0f, 0.0f, 0.0f),
                       glm::vec3(0.0f, 1.0f, 0.0f));
     V= rotate(V,-PI/4,vec3(1,0,0));
     V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
     V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
+
+
 
     int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
 
@@ -436,6 +556,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     }
 
 
+
     //Wylicz macierz modelu rysowanego obiektu
     szachownica.M= glm::mat4(1.0f);
     drawObject(shaderProgramSzachownica,P,V,szachownica.M,0,&szachownica);
@@ -443,8 +564,6 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     stolik.M= glm::mat4(1.0f);
     stolik.M = translate(stolik.M, vec3(0,-8.5,0));
     drawObject(shaderProgramStolik,P,V,stolik.M,0,&stolik);
-
-
     //Przerzuć tylny bufor na przedni
     glfwSwapBuffers(window);
 }
@@ -494,6 +613,7 @@ void wczytajGre()
 
 int main(void)
 {
+
     pionek.loadFromOBJ("pionek.obj");
     szachownica.loadFromOBJ("szachownica.obj");
     wieza.loadFromOBJ("wieza.obj");
