@@ -31,23 +31,5 @@ public:
     GLuint readTexture(char* filename);
 };
 
-class Obj3d
-{
-public:
-    vector<vec4> vertices;
-    vector<vec4> normals;
-    vector<vec4> vertexNormals;
-    vector<vec2> texCoords;
-    vector<vec4> c1;
-    vector<vec4> c2;
-    vector<vec4> c3;
-    GLuint vao;
-    GLuint diffTexture;
-    GLuint normTexture;
-    GLuint heighTexture;
-    glm::mat4 M;
-    void loadFromOBJ(string filename);
-    void loadTexture(Texture *texture);
-};
-
 #endif // OBJ3D_H_INCLUDED
+

@@ -48,15 +48,10 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 using namespace glm;
 using namespace std;
 
-void prepareBoard();
-void preparePawn();
-void prepareWieza();
-void prepareGoniec();
-void prepareKrol();
-void prepareSkoczek();
-void prepareHetman();
-void prepareStolik();
 void wczytajGre();
+void prepareObjects();
+void loadObjects();
+void loadTextures();
 float fWysokosci(float x);
 void ruch(Obj3d * model,int i, int j, int a, int b, int x, int y, float czas);
 GLuint loadCubemap(vector<std::string> faces);
@@ -70,7 +65,7 @@ GLuint loadCubemap(vector<std::string> faces);
     "back.png"
 };
 
-
+Texture woodTexture, boardTexture, tableTexture;
 GLuint cubemapTexture ;
 GLuint skyboxVAO;
 
@@ -354,15 +349,8 @@ void initOpenGLProgram(GLFWwindow* window)
     prepareObject(shaderProgramStolik,&stolik);
     cubemapTexture =loadCubemap(faces);
 
-
-    prepareBoard();
-    preparePawn();
-    prepareWieza();
-    prepareGoniec();
-    prepareHetman();
-    prepareKrol();
-    prepareSkoczek();
-    prepareStolik();
+    loadTextures();
+    prepareObjects();
 
     wczytajGre();
 }
@@ -455,7 +443,7 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów i głębokości
 
-glEnable(GL_STENCIL_TEST);
+    glEnable(GL_STENCIL_TEST);
      // Draw floor
     glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -545,7 +533,7 @@ glEnable(GL_STENCIL_TEST);
     }
     }
     glDepthMask(GL_TRUE);
-  glDisable(GL_STENCIL_TEST);
+    glDisable(GL_STENCIL_TEST);
 
 
     if(true){
@@ -702,15 +690,7 @@ void wczytajGre()
 
 int main(void)
 {
-
-    pionek.loadFromOBJ("pionek.obj");
-    szachownica.loadFromOBJ("szachownica.obj");
-    wieza.loadFromOBJ("wieza.obj");
-    hetman.loadFromOBJ("hetman.obj");
-    krol.loadFromOBJ("krol.obj");
-    goniec.loadFromOBJ("goniec.obj");
-    skoczek.loadFromOBJ("skoczek.obj");
-    stolik.loadFromOBJ("stolik.obj");
+    loadObjects();
     GLFWwindow* window; //Wskaźnik na obiekt reprezentujący okno
     glfwSetErrorCallback(error_callback);//Zarejestruj procedurę obsługi błędów
 
@@ -747,7 +727,6 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
-
     initOpenGLProgram(window); //Operacje inicjujące
 
     float angle_x = 0; //Kąt obrotu obiektu
@@ -758,7 +737,6 @@ int main(void)
     //Główna pętla
     while (!glfwWindowShouldClose(window))   //Tak długo jak okno nie powinno zostać zamknięte
     {
-
         if(dalej)
         {
             dalej=0;
@@ -776,7 +754,6 @@ int main(void)
         czasKlatki=glfwGetTime(); //Wyzeruj licznik czasu
         drawScene(window,angle_x,angle_y); //Wykonaj procedurę rysującą
         glfwPollEvents(); //Wykonaj procedury callback w zalezności od zdarzeń jakie zaszły.
-
     }
     freeOpenGLProgram();
     glfwDestroyWindow(window); //Usuń kontekst OpenGL i okno
@@ -784,64 +761,32 @@ int main(void)
     exit(EXIT_SUCCESS);
 }
 
-void preparePawn()
-{
-    diffTexWood=readTexture("download.png");
-    normalTexWood=readTexture("wood_norm.png");
-    heightTexWood=readTexture("wood_height.png");
-
-    pionek.diffTexture=diffTexWood;
-    pionek.normTexture=normalTexWood;
-    pionek.heighTexture=heightTexWood;
+void prepareObjects(){
+    pionek.loadTexture(&woodTexture);
+    szachownica.loadTexture(&boardTexture);
+    wieza.loadTexture(&woodTexture);
+    hetman.loadTexture(&woodTexture);
+    krol.loadTexture(&woodTexture);
+    goniec.loadTexture(&woodTexture);
+    skoczek.loadTexture(&woodTexture);
+    stolik.loadTexture(&tableTexture);
 }
 
-void prepareBoard()
-{
-    diffTexBricks=readTexture("szachownica_diffuse.png");
-    normalTexBricks=readTexture("wood_norm.png");
-    heightTexBricks=readTexture("wood_height.png");
+void loadTextures(){
+    woodTexture = Texture("download.png","wood_height.png","wood_norm.png");
+    boardTexture = Texture("szachownica_diffuse.png","wood_height.png","wood_norm.png");
+    tableTexture = Texture("WoodFineDark004_diffuse.png","wood_height.png","WoodFineDark004_norm.png");
+}
 
-    szachownica.diffTexture=diffTexBricks;
-    szachownica.normTexture=normalTexBricks;
-    szachownica.heighTexture=heightTexBricks;
-}
-void prepareWieza()
-{
-    wieza.diffTexture=diffTexWood;
-    wieza.normTexture=normalTexWood;
-    wieza.heighTexture=heightTexWood;
-}
-void prepareSkoczek()
-{
-    skoczek.diffTexture=diffTexWood;
-    skoczek.normTexture=normalTexWood;
-    skoczek.heighTexture=heightTexWood;
-}
-void prepareGoniec()
-{
-    goniec.diffTexture=diffTexWood;
-    goniec.normTexture=normalTexWood;
-    goniec.heighTexture=heightTexWood;
-}
-void prepareKrol()
-{
-    krol.diffTexture=diffTexWood;
-    krol.normTexture=normalTexWood;
-    krol.heighTexture=heightTexWood;
-}
-void prepareHetman()
-{
-    hetman.diffTexture=diffTexWood;
-    hetman.normTexture=normalTexWood;
-    hetman.heighTexture=heightTexWood;
-}
-void prepareStolik()
-{
-    diffTexStolik=readTexture("WoodFineDark004_diffuse.png");
-    normalTexStolik=readTexture("WoodFineDark004_norm.png");
-    stolik.diffTexture=diffTexStolik;
-    stolik.normTexture=normalTexStolik;
-    stolik.heighTexture=heightTexWood;
+void loadObjects(){
+    pionek.loadFromOBJ("pionek.obj");
+    szachownica.loadFromOBJ("szachownica.obj");
+    wieza.loadFromOBJ("wieza.obj");
+    hetman.loadFromOBJ("hetman.obj");
+    krol.loadFromOBJ("krol.obj");
+    goniec.loadFromOBJ("goniec.obj");
+    skoczek.loadFromOBJ("skoczek.obj");
+    stolik.loadFromOBJ("stolik.obj");
 }
 
 float fWysokosci(float x)
