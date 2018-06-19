@@ -59,6 +59,7 @@ void prepareStolik();
 void wczytajGre();
 float fWysokosci(float x);
 void ruch(Obj3d * model,int i, int j, int a, int b, int x, int y, float czas);
+void ScrollCallback( GLFWwindow *window, double xOffset, double yOffset );
 GLuint loadCubemap(vector<std::string> faces);
 
     vector<std::string> faces{
@@ -82,6 +83,8 @@ int x; //pozycja doecelowa
 int y;
 int dalej;
 int koniec;
+
+float fov=50;
 
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
@@ -334,7 +337,8 @@ void initOpenGLProgram(GLFWwindow* window)
     glClearColor(0, 0, 0, 1); //Czyść ekran na czarno
     glEnable(GL_DEPTH_TEST); //Włącz używanie Z-Bufora
     glEnable(GL_STENCIL_TEST);
-    glfwSetKeyCallback(window, key_callback); //Zarejestruj procedurę obsługi klawiatury
+    glfwSetKeyCallback(window, key_callback);
+    glfwSetScrollCallback( window, ScrollCallback );
     glfwSetFramebufferSizeCallback(window,windowResize); //Zarejestruj procedurę obsługi zmiany rozmiaru bufora ramki
 
     shaderProgramPionek=new ShaderProgram("vshaderPionek.glsl",NULL,"fshaderPionek.glsl"); //Wczytaj program cieniujący
@@ -440,9 +444,9 @@ void drawObject(ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM,float ko
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window, float angle_x, float angle_y)
 {
-    glm::mat4 P = glm::perspective(60 * PI / 180, aspect, 1.0f, 50.0f); //Wylicz macierz rzutowania
+    glm::mat4 P = glm::perspective(fov * PI / 180, aspect, 1.0f, 200.0f); //Wylicz macierz rzutowania
     glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
-                      glm::vec3(0.0f, 0.0f, -35.0f),
+                      glm::vec3(0.0f, 0.0f, -100.0f),
                       glm::vec3(0.0f, 0.0f, 0.0f),
                       glm::vec3(0.0f, 1.0f, 0.0f));
 
@@ -450,12 +454,14 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
     V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
     V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
 
-    if(true){//odbica
+glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
+
+    if(false){//odbica
 
 
-    glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT); //Wykonaj czyszczenie bufora kolorów i głębokości
+     //Wykonaj czyszczenie bufora kolorów i głębokości
 
-glEnable(GL_STENCIL_TEST);
+//glEnable(GL_STENCIL_TEST);
      // Draw floor
     glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -545,10 +551,11 @@ glEnable(GL_STENCIL_TEST);
     }
     }
     glDepthMask(GL_TRUE);
-  glDisable(GL_STENCIL_TEST);
+ // glDisable(GL_STENCIL_TEST);
 
 
     if(true){
+
     glDepthMask(GL_FALSE);
     shaderSkyBox->use();
     glUniformMatrix4fv(shaderSkyBox->getUniformLocation("P"),1, false, glm::value_ptr(P));
@@ -642,6 +649,10 @@ glEnable(GL_STENCIL_TEST);
         glfwSetTime(0);
         czasKlatki=0;
     }
+
+    mat4 R = rotate(mat4(1.0f), (float) cos(glfwGetTime())*3, vec3(0,1,0));
+    mat4 T = translate(mat4(1.0f), vec3(30,0,0));
+    mat4 M;
 
 
 
@@ -763,6 +774,11 @@ int main(void)
         {
             dalej=0;
             plik >> a >> b >> x >> y;
+            a-=1;
+            b-=1;
+            y-=1;
+            x-=1;
+
             cout<<a<<b<<x<<y<<endl;
         }
         if (!plik.good())
@@ -847,4 +863,22 @@ void prepareStolik()
 float fWysokosci(float x)
 {
     return -pow((x-1.647),6)+20;
+}
+void ScrollCallback( GLFWwindow *window, double xOffset, double yOffset )
+{
+    if (yOffset<0 ){
+        if (fov - 3*yOffset <= 60){
+           fov -= 3*yOffset;
+        }
+        else {
+            fov = 60;
+        }
+    }else {
+    if (fov - 3*yOffset >= 7){
+           fov -= 3*yOffset;
+        }
+        else {
+            fov = 7;
+        }
+    }
 }

@@ -25,15 +25,13 @@ vec2 parallaxTexCoords(vec4 v, vec2 t, float h, float s){
         hc = hc+hi;
         ht = h*texture(heightMap,tc).r;
     }
-
-
     return tc;
 }
 
 
 void main(void) {
 	vec4 v=normalize(i_v);
-    vec2 tc= iTexCoord0;
+    vec2 tc=iTexCoord0 ; //parallaxTexCoords(v, iTexCoord0,0.02,100);// ;
 	vec4 n=normalize(vec4(texture(normalMap, tc).rgb * 2 - 1,0));
     //vec4 n=normalize(i_n);
     vec4 l=normalize(i_l);
@@ -48,7 +46,7 @@ void main(void) {
     vec4 ls=vec4(1,1,1,0); //Kolor swiatla odbijanego
 
     float nl=max(dot(n,l),0); //Kosinus kata pomiedzy wektorami do swiatla i normalnym
-    float rv=pow(max(dot(r,v),0),60); //Kosinus kata pomiedzy wektorami do obserwatora i odbitym, podniesiony do wykladnika Phonga
+    float rv=pow(max(dot(r,v),0),100); //Kosinus kata pomiedzy wektorami do obserwatora i odbitym, podniesiony do wykladnika Phonga
 
 	pixelColor=ka*la*kd+kd*ld*vec4(nl,nl,nl,0)+ks*ls*vec4(rv,rv,rv,0)-(kd*ld*vec4(nl,nl,nl,0)*vec4(0.95*kolor,0.95*kolor,0.95*kolor,0));
 }
