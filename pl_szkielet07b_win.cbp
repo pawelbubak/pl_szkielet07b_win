@@ -60,6 +60,7 @@
 		<Unit filename="model.h" />
 		<Unit filename="obj3d.cpp" />
 		<Unit filename="obj3d.h" />
+		<Unit filename="prepareObjects.h" />
 		<Unit filename="shaderprogram.cpp" />
 		<Unit filename="shaderprogram.h" />
 		<Unit filename="teapot.cpp" />

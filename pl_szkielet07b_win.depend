@@ -1746,7 +1746,7 @@
 1528108440 c:\users\pawel\documents\github\pl_szkielet07b_win\teapot.h
 	"model.h"
 
-1528453238 source:c:\users\pawel\documents\github\pl_szkielet07b_win\main_file.cpp
+1529086775 source:c:\users\pawel\documents\github\pl_szkielet07b_win\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1846,7 +1846,7 @@
 	"cube.h"
 	"teapot.h"
 
-1528453238 c:\users\pawel\documents\github\pl_szkielet07b_win\obj3d.h
+1529088446 c:\users\pawel\documents\github\pl_szkielet07b_win\obj3d.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -1864,7 +1864,7 @@
 	<string>
 	<tuple>
 
-1528453375 source:c:\users\pawel\documents\github\pl_szkielet07b_win\obj3d.cpp
+1529088491 source:c:\users\pawel\documents\github\pl_szkielet07b_win\obj3d.cpp
 	"obj3d.h"
 
 1528460288 source:c:\users\dom\documents\github\pl_szkielet07b_win\cube.cpp
@@ -3641,10 +3641,10 @@
 1528402750 source:c:\users\piotr\documents\github\pl_szkielet07b_win\model.cpp
 	"model.h"
 
-1528839639 source:c:\users\piotr\documents\github\pl_szkielet07b_win\obj3d.cpp
+1529427178 source:c:\users\piotr\documents\github\pl_szkielet07b_win\obj3d.cpp
 	"obj3d.h"
 
-1528707055 c:\users\piotr\documents\github\pl_szkielet07b_win\obj3d.h
+1529427178 c:\users\piotr\documents\github\pl_szkielet07b_win\obj3d.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -3765,7 +3765,7 @@
 1528402750 source:c:\users\piotr\documents\github\pl_szkielet07b_win\teapot.cpp
 	"teapot.h"
 
-1529422957 source:c:\users\piotr\documents\github\pl_szkielet07b_win\main_file.cpp
+1529427178 source:c:\users\piotr\documents\github\pl_szkielet07b_win\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -3783,4 +3783,25 @@
 	<string>
 	<tuple>
 	"obj3d.h"
+
+1529087661 source:c:\users\pawel\documents\github\pl_szkielet07b_win\texture.cpp
+	"texture.h"
+
+1529087681 c:\users\pawel\documents\github\pl_szkielet07b_win\texture.h
+	<GL/glew.h>
+	<GLFW/glfw3.h>
+	<glm/glm.hpp>
+	<glm/gtc/type_ptr.hpp>
+	<glm/gtc/matrix_transform.hpp>
+	<stdlib.h>
+	<stdio.h>
+	"constants.h"
+	"allmodels.h"
+	"lodepng.h"
+	"shaderprogram.h"
+	<iostream>
+	<sstream>
+	<fstream>
+	<string>
+	<tuple>
 
