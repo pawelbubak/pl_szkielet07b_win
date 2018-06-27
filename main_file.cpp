@@ -449,11 +449,9 @@ glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
 
      //Wykonaj czyszczenie bufora kolorów i głębokości
 
-<<<<<<< HEAD
 //glEnable(GL_STENCIL_TEST);
-=======
+
     glEnable(GL_STENCIL_TEST);
->>>>>>> d541991d7be5867291c7ef25594bd9689a1cb7ed
      // Draw floor
     glStencilFunc(GL_ALWAYS, 1, 0xFF); // Set any stencil to 1
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
@@ -474,7 +472,7 @@ glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
 
     int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
     float speed=1;
-    float czas=2;//odleglosc/speed;
+    float czas=0.3;//odleglosc/speed;
 
     for (int i=0; i<8; i++)
     {
@@ -543,11 +541,11 @@ glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
     }
     }
     glDepthMask(GL_TRUE);
-<<<<<<< HEAD
+
  // glDisable(GL_STENCIL_TEST);
-=======
+
     glDisable(GL_STENCIL_TEST);
->>>>>>> d541991d7be5867291c7ef25594bd9689a1cb7ed
+
 
 
     if(true){
@@ -573,7 +571,7 @@ glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
     int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
 
     float speed=1;
-    float czas=2;//odleglosc/speed;
+    float czas=0.3;//odleglosc/speed;
 
     for (int i=0; i<8; i++)
     {

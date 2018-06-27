@@ -3765,7 +3765,7 @@
 1528402750 source:c:\users\piotr\documents\github\pl_szkielet07b_win\teapot.cpp
 	"teapot.h"
 
-1529427178 source:c:\users\piotr\documents\github\pl_szkielet07b_win\main_file.cpp
+1529434650 source:c:\users\piotr\documents\github\pl_szkielet07b_win\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
