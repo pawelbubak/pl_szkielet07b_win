@@ -1,3 +1,0 @@
-C:/Users/Piotr/Desktop/pl_szkielet07b_win/cmake-build-debug/CMakeFiles/pl_szkielet07b_win.dir
-C:/Users/Piotr/Desktop/pl_szkielet07b_win/cmake-build-debug/CMakeFiles/edit_cache.dir
-C:/Users/Piotr/Desktop/pl_szkielet07b_win/cmake-build-debug/CMakeFiles/rebuild_cache.dir

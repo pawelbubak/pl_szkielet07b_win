@@ -1,3 +1,0 @@
-"C:\Program Files\JetBrains\CLion 2017.3.2\bin\cmake\bin\cmake.exe" -E remove -f CMakeFiles\pl_szkielet07b_win.dir/objects.a
-C:\PROGRA~2\MINGW-~1\I686-7~1.0-P\mingw32\bin\ar.exe cr CMakeFiles\pl_szkielet07b_win.dir/objects.a @CMakeFiles\pl_szkielet07b_win.dir\objects1.rsp
-C:\PROGRA~2\MINGW-~1\I686-7~1.0-P\mingw32\bin\G__~1.EXE -g   -Wl,--whole-archive CMakeFiles\pl_szkielet07b_win.dir/objects.a -Wl,--no-whole-archive  -o pl_szkielet07b_win.exe -Wl,--out-implib,libpl_szkielet07b_win.dll.a -Wl,--major-image-version,0,--minor-image-version,0 @CMakeFiles\pl_szkielet07b_win.dir\linklibs.rsp
