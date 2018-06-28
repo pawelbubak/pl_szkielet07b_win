@@ -168,7 +168,7 @@ void Obj3d::loadFromOBJ(string filename)
         suma= vec3(0,0,0);
         for (int o=0; o<ifa.size(); o++)
         {
-            int j=o;//(i-80+o)%ifa.size();
+            int j=o;
             if (iv[get<2>(ifa[i])[0]-1]==iv[get<0>(ifa[j])[0]-1])
             {
                 suma= suma + in[get<0>(ifa[j])[2]-1];

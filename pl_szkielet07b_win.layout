@@ -2,29 +2,14 @@
 <CodeBlocks_layout_file>
 	<FileVersion major="1" minor="0" />
 	<ActiveTarget name="Release" />
-	<File name="fshaderPionek.glsl" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
+	<File name="obj3d.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="605" topLine="0" />
+			<Cursor1 position="5583" topLine="243" />
 		</Cursor>
 	</File>
-	<File name="cube.cpp" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="gshader.glsl" open="1" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1917" topLine="309" />
-		</Cursor>
-	</File>
-	<File name="lodepng.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="9437" topLine="203" />
-		</Cursor>
-	</File>
-	<File name="teapot.h" open="0" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="1267" topLine="0" />
-		</Cursor>
-	</File>
-	<File name="vshaderPionek.glsl" open="1" top="0" tabpos="5" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="746" topLine="3" />
+			<Cursor1 position="507" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="shaderprogram.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -32,37 +17,29 @@
 			<Cursor1 position="1256" topLine="12" />
 		</Cursor>
 	</File>
-	<File name="obj3d.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="fshaderSkyBox.glsl" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="644" topLine="3" />
+			<Cursor1 position="93" topLine="0" />
 		</Cursor>
-	</File>
-	<File name="main_file.cpp" open="1" top="1" tabpos="6" split="0" active="1" splitpos="0" zoom_1="-2" zoom_2="0">
-		<Cursor>
-			<Cursor1 position="20610" topLine="507" />
-		</Cursor>
-		<Folding>
-			<Collapse line="339" />
-		</Folding>
 	</File>
 	<File name="shaderprogram.cpp" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
 			<Cursor1 position="2814" topLine="47" />
 		</Cursor>
 	</File>
-	<File name="model.cpp" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="fshaderPionek.glsl" open="1" top="0" tabpos="1" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="871" topLine="0" />
+			<Cursor1 position="1176" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="teapot.cpp" open="0" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="vshaderPionek.glsl" open="1" top="0" tabpos="4" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1215007" topLine="29826" />
+			<Cursor1 position="161" topLine="14" />
 		</Cursor>
 	</File>
-	<File name="fshaderSkyBox.glsl" open="0" top="0" tabpos="7" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="obj3d.h" open="1" top="0" tabpos="2" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="93" topLine="0" />
+			<Cursor1 position="1056" topLine="0" />
 		</Cursor>
 	</File>
 	<File name="vshaderSkyBox.glsl" open="0" top="0" tabpos="6" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
@@ -70,14 +47,21 @@
 			<Cursor1 position="76" topLine="0" />
 		</Cursor>
 	</File>
-	<File name="cube.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="lodepng.h" open="0" top="0" tabpos="0" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="1371" topLine="27" />
+			<Cursor1 position="9437" topLine="203" />
 		</Cursor>
 	</File>
-	<File name="obj3d.cpp" open="1" top="0" tabpos="3" split="0" active="1" splitpos="0" zoom_1="0" zoom_2="0">
+	<File name="main_file.cpp" open="1" top="1" tabpos="5" split="0" active="1" splitpos="0" zoom_1="-1" zoom_2="0">
 		<Cursor>
-			<Cursor1 position="4918" topLine="170" />
+			<Cursor1 position="1556" topLine="204" />
 		</Cursor>
+		<Folding>
+			<Collapse line="299" />
+			<Collapse line="324" />
+			<Collapse line="336" />
+			<Collapse line="416" />
+			<Collapse line="600" />
+		</Folding>
 	</File>
 </CodeBlocks_layout_file>

@@ -33,10 +33,7 @@ vec2 parallaxTexCoords(vec4 v, vec2 t, float h, float s){
     return tc;
 }
 
-
 void main(void) {
-
-
 	vec4 v=normalize(i_v);
     vec2 tc=iTexCoord0 ; //parallaxTexCoords(v, iTexCoord0,0.02,100);// ;
 	vec4 n=normalize(vec4(texture(normalMap, tc).rgb * 2 - 1,0));

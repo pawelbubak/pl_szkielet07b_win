@@ -47,24 +47,16 @@
 			<Add directory="glfw/lib" />
 			<Add directory="glew/lib" />
 		</Linker>
-		<Unit filename="allmodels.h" />
-		<Unit filename="constants.h" />
-		<Unit filename="cube.cpp" />
-		<Unit filename="cube.h" />
 		<Unit filename="fshaderPionek.glsl" />
 		<Unit filename="fshaderSkyBox.glsl" />
+		<Unit filename="gshader.glsl" />
 		<Unit filename="lodepng.cpp" />
 		<Unit filename="lodepng.h" />
 		<Unit filename="main_file.cpp" />
-		<Unit filename="model.cpp" />
-		<Unit filename="model.h" />
 		<Unit filename="obj3d.cpp" />
 		<Unit filename="obj3d.h" />
-		<Unit filename="prepareObjects.h" />
 		<Unit filename="shaderprogram.cpp" />
 		<Unit filename="shaderprogram.h" />
-		<Unit filename="teapot.cpp" />
-		<Unit filename="teapot.h" />
 		<Unit filename="vshaderPionek.glsl" />
 		<Unit filename="vshaderSkyBox.glsl" />
 		<Extensions>

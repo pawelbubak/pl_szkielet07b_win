@@ -8,7 +8,6 @@ uniform float Kolor;
 uniform vec4 LightPos1;
 uniform vec4 LightPos2;
 
-
 //Atrybuty
 in vec4 vertex; //wspolrzedne wierzcholka w przestrzeni modelu
 in vec4 normal; //wektor normalny w wierzcholku w przestrzeni modelu
