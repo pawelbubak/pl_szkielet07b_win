@@ -3644,7 +3644,7 @@
 1529427178 source:c:\users\piotr\documents\github\pl_szkielet07b_win\obj3d.cpp
 	"obj3d.h"
 
-1529427178 c:\users\piotr\documents\github\pl_szkielet07b_win\obj3d.h
+1530188054 c:\users\piotr\documents\github\pl_szkielet07b_win\obj3d.h
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -3652,8 +3652,6 @@
 	<glm/gtc/matrix_transform.hpp>
 	<stdlib.h>
 	<stdio.h>
-	"constants.h"
-	"allmodels.h"
 	"lodepng.h"
 	"shaderprogram.h"
 	<iostream>
@@ -3765,7 +3763,7 @@
 1528402750 source:c:\users\piotr\documents\github\pl_szkielet07b_win\teapot.cpp
 	"teapot.h"
 
-1529434650 source:c:\users\piotr\documents\github\pl_szkielet07b_win\main_file.cpp
+1530187922 source:c:\users\piotr\documents\github\pl_szkielet07b_win\main_file.cpp
 	<GL/glew.h>
 	<GLFW/glfw3.h>
 	<glm/glm.hpp>
@@ -3773,8 +3771,6 @@
 	<glm/gtc/matrix_transform.hpp>
 	<stdlib.h>
 	<stdio.h>
-	"constants.h"
-	"allmodels.h"
 	"lodepng.h"
 	"shaderprogram.h"
 	<iostream>
