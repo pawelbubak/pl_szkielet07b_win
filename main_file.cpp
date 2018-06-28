@@ -43,6 +43,7 @@ Place, Fifth Floor, Boston, MA  02110 - 1301  USA
 #include <tuple>
 #include "obj3d.h"
 
+
 using namespace glm;
 using namespace std;
 
@@ -66,20 +67,18 @@ vector<std::string> faces
     "back.png"
 };
 
+vector <vec4> graV;
+
 Texture woodTexture, boardTexture, tableTexture;
 GLuint cubemapTexture ;
 GLuint skyboxVAO;
 
 
-int a; //pozycja poczatkowa
-int b;
-int x; //pozycja doecelowa
-int y;
-int dalej;
-int koniec;
-
+int a, b, x, y, liczba_krokow,obecny_krok; //pozycja poczatkowa
+int dalej, koniec;
 
 float fov=50;
+double czas=1;
 
 float speed_x = 0; // [radiany/s]
 float speed_y = 0; // [radiany/s]
@@ -99,15 +98,6 @@ Obj3d szachownica;
 Obj3d stolik;
 Obj3d swiatlo;
 float PI= 3.14159265;
-
-GLuint diffTexWood;
-GLuint normalTexWood;
-GLuint heightTexWood;
-GLuint diffTexBricks;
-GLuint normalTexBricks;
-GLuint heightTexBricks;
-GLuint diffTexStolik;
-GLuint normalTexStolik;
 
 //Uchwyty na VAO i bufory wierzchołków
 GLuint bufVertices; //Uchwyt na bufor VBO przechowujący tablicę współrzędnych wierzchołków
@@ -194,6 +184,13 @@ void key_callback(GLFWwindow* window, int key, int scancode, int action, int mod
             speed_x = -3.14;
         if (key == GLFW_KEY_DOWN)
             speed_x = 3.14;
+        if (key == GLFW_KEY_KP_ADD){
+            if(czas>0.2)
+                czas-=0.2;
+        }
+
+        if (key == GLFW_KEY_KP_SUBTRACT)
+            czas+=0.2;
     }
     if (action == GLFW_RELEASE)
     {
@@ -389,14 +386,7 @@ void freeOpenGLProgram()
     glDeleteBuffers(1,&bufC2);
     glDeleteBuffers(1,&bufC3);
 
-    //Wykasuj tekstury
-    glDeleteTextures(1,&diffTexWood);
-    glDeleteTextures(1,&normalTexWood);
-    glDeleteTextures(1,&heightTexWood);
-    //Wykasuj tekstury
-    glDeleteTextures(1,&diffTexBricks);
-    glDeleteTextures(1,&normalTexBricks);
-    glDeleteTextures(1,&heightTexBricks);
+
 
 }
 
@@ -444,44 +434,40 @@ void drawObject(ShaderProgram *shaderProgram, mat4 mP, mat4 mV, mat4 mM,float ko
     glBindVertexArray(0);
 }
 
-
 //Procedura rysująca zawartość sceny
 void drawScene(GLFWwindow* window, float angle_x, float angle_y)
 {
-    czasRuchu= glfwGetTime()- poprzedniCzas;
-    glm::mat4 P = glm::perspective((float) (fov * 3.14159265 / 180), aspect, 1.0f, 250.0f); //Wylicz macierz rzutowania
-    glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
-                      glm::vec3(0.0f, 0.0f, -50.0f),
-                      glm::vec3(0.0f, 0.0f, 0.0f),
-                      glm::vec3(0.0f, 1.0f, 0.0f));
 
-    V= rotate(V,-PI/4,vec3(1,0,0));
-    V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
-    V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
+
+
+    czasRuchu= glfwGetTime()- poprzedniCzas;
+    glm::mat4 P = glm::perspective((float) (fov * 3.14159265 / 180), aspect, 1.0f, 350.0f); //Wylicz macierz rzutowania
+    glm::mat4 V = glm::lookAt( //Wylicz macierz widoku
+                      vec3(0.0f, 0.0f, 90.0f),
+                      vec3(0.0f, 0.0f, 0.0f),
+                      vec3(0.0f, 1.0f, 0.0f));
+
+    mat4 CaM = rotate(mat4(1.0f), -angle_y, glm::vec3(0, 1, 0));
+    CaM = rotate(CaM, -angle_x, vec3((inverse(CaM)*vec4(1, 0, 0,1)).rgb));
+    V=V*CaM;
 
     glClear(GL_COLOR_BUFFER_BIT|GL_DEPTH_BUFFER_BIT|GL_STENCIL_BUFFER_BIT);
-    mat4 lightM= translate( rotate(mat4(1.0f), (float) sin(glfwGetTime()/4), vec3(1,0,0)), vec3(0,100,0));
+    mat4 lightM= scale(translate( rotate(mat4(1.0f), (float) (sin(glfwGetTime()/4)*1.3), vec3(1,0,0)), vec3(0,100,0)),vec3(6,6,6));
 
     lightPos1=lightM*vec4(0,0,0,1);
-    lightPos2=vec4(0,-10,100,1);
-
-    V = glm::lookAt( //Wylicz macierz widoku
-            glm::vec3(0.0f, 0.0f, -100.0f),
-            glm::vec3(0.0f, 0.0f, 0.0f),
-            glm::vec3(0.0f, 1.0f, 0.0f));
-
-    V= rotate(V,-PI/4,vec3(1,0,0));
-    V = glm::rotate(V, angle_y, glm::vec3(0, 1, 0));
-    V = glm::rotate(V, angle_x, glm::vec3(1, 0, 0));
+    lightPos2=vec4(0,-30,100,1);
 
         drawSkyBox( P, V);
 
         swiatlo.M=lightM;
         drawObject(shaderSwiatlo, P,V, swiatlo.M, 0, & swiatlo);
+        mat4 mm = scale(translate( rotate(lightM, (float) glfwGetTime()*3, vec3(0,0,1)), vec3(0,3,0)),vec3(0.7,0.7,0.7));
+        swiatlo.M=mm;
+        drawObject(shaderSwiatlo, P,V, swiatlo.M, 0, & swiatlo);
 
         int odleglosc=sqrt(pow(x-a,2)+pow(y-b,2));
         float speed=1;
-        float czas=1;//odleglosc/speed;
+
 
         for (int i=0; i<8; i++)
         {
@@ -585,7 +571,6 @@ void drawScene(GLFWwindow* window, float angle_x, float angle_y)
         glStencilMask(0x00); // Don't write anything to stencil buffer
         glDepthMask(GL_TRUE); // Write to depth buffer
 
-
         V = scale(V,vec3(1, -1, -1));
         for (int i=0; i<8; i++)
         {
@@ -675,6 +660,35 @@ void ruch(Obj3d* model,int i, int j, int a, int b, int x, int y, float czas)
 
 void wczytajGre()
 {
+    graV.clear();
+    ifstream plik;
+
+    plik.open("gra.txt");
+    if (!plik.good())
+    {
+        fprintf(stderr, "Nie można wczytać pliku gry\n");
+        exit(EXIT_FAILURE);
+    }
+    int k=1;
+
+    while(k){
+        {
+            dalej=0;
+            plik >> a >> b >> x >> y;
+            a-=1;
+            b-=1;
+            y-=1;
+            x-=1;
+            graV.push_back(vec4(a,b,x,y));
+        }
+        if (!plik.good())
+        {
+        k=0;
+        } }
+
+        liczba_krokow=graV.size();
+
+
     for(int i=0; i < 8; i++)
     {
         for (int j=0; j<8; j++)
@@ -734,14 +748,7 @@ int main(void)
         exit(EXIT_FAILURE);
     }
 
-    ifstream plik;
 
-    plik.open("gra.txt");
-    if (!plik.good())
-    {
-        fprintf(stderr, "Nie można wczytać pliku gry\n");
-        exit(EXIT_FAILURE);
-    }
 
     initOpenGLProgram(window); //Operacje inicjujące
 
@@ -751,25 +758,24 @@ int main(void)
     glfwSetTime(0); //Wyzeruj licznik czasu
     poprzedniCzas=glfwGetTime();
     dalej=1;
+    obecny_krok=0;
     //Główna pętla
     while (!glfwWindowShouldClose(window))   //Tak długo jak okno nie powinno zostać zamknięte
     {
-        if(dalej)
-        {
-            dalej=0;
-            plik >> a >> b >> x >> y;
-            a-=1;
-            b-=1;
-            y-=1;
-            x-=1;
+        cout << liczba_krokow<< endl;
 
-            cout<<a<<b<<x<<y<<endl;
+        if (dalej && obecny_krok<liczba_krokow-1){
+                obecny_krok++;
+                vec4 dane= graV[obecny_krok];
+                a=dane.x;
+                b=dane.y;
+                x=dane.z;
+                y=dane.w;
+                dalej=0;
         }
-        if (!plik.good())
-        {
-            koniec=1;
-            a=b=x=y=-1;
-        }
+
+
+
 
         angle_x += speed_x*(glfwGetTime()-czasKlatki); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
         angle_y += speed_y*(glfwGetTime()-czasKlatki); //Zwiększ kąt o prędkość kątową razy czas jaki upłynął od poprzedniej klatki
@@ -833,7 +839,7 @@ void loadObjects()
     goniec.loadFromOBJ("goniec.obj");
     skoczek.loadFromOBJ("skoczek.obj");
     stolik.loadFromOBJ("stolik2.obj");
-    swiatlo.loadFromOBJ("stolik2.obj");
+    swiatlo.loadFromOBJ("kula.obj");
 }
 
 float fWysokosci(float x)

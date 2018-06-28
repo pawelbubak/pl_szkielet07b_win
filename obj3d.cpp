@@ -198,6 +198,7 @@ void Obj3d::loadFromOBJ(string filename)
         vertices.push_back(iv[get<1>(ifa[i])[0]-1]);
         vertices.push_back(iv[get<2>(ifa[i])[0]-1]);
 
+
         texCoords.push_back(it[get<0>(ifa[i])[1]-1]);
         texCoords.push_back(it[get<1>(ifa[i])[1]-1]);
         texCoords.push_back(it[get<2>(ifa[i])[1]-1]);
