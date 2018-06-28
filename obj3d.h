@@ -7,8 +7,6 @@
 #include <glm/gtc/matrix_transform.hpp>
 #include <stdlib.h>
 #include <stdio.h>
-#include "constants.h"
-#include "allmodels.h"
 #include "lodepng.h"
 #include "shaderprogram.h"
 #include <iostream>
@@ -19,6 +17,17 @@
 
 using namespace glm;
 using namespace std;
+
+class Texture
+{
+public:
+    GLuint diffTexture;
+    GLuint normTexture;
+    GLuint heightTexture;
+    Texture();
+    Texture(char* diff, char* heigh, char* norm);
+    GLuint readTexture(char* filename);
+};
 
 class Obj3d
 {
@@ -36,6 +45,7 @@ public:
     GLuint heighTexture;
     glm::mat4 M;
     void loadFromOBJ(string filename);
+    void loadTexture(Texture *texture);
 };
 
 #endif // OBJ3D_H_INCLUDED
